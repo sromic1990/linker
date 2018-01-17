@@ -303,8 +303,8 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 
 			VerifyGenericParameters (src, linked);
 			VerifyCustomAttributes (src, linked);
-			VerifySecurityAttributes (src, linked);
 			VerifyParameters (src, linked);
+			VerifySecurityAttributes (src, linked);
 		}
 
 		void VerifyResources (AssemblyDefinition original, AssemblyDefinition linked)
