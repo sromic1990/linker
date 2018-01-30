@@ -50,6 +50,28 @@
     <Compile Include="Attributes\AttributeOnPreservedTypeWithUsedSetter.cs" />
     <Compile Include="Attributes\AttributeOnUsedMethodIsKept.cs" />
     <Compile Include="Attributes\AttributeOnUsedPropertyIsKept.cs" />
+    <None Include="Attributes\OnlyKeepUsed\Dependencies\UnusedAttributeWithTypeForwarderIsRemoved_Forwarder.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\Dependencies\UnusedAttributeWithTypeForwarderIsRemoved_Lib.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\AttributeDefinedAndUsedInOtherAssemblyIsKept.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\AttributeUsedByAttributeIsKept.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UnusedAttributeTypeOnModuleIsRemoved.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UnusedAttributeWithTypeForwarderIsRemoved.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\CanLinkCoreLibrariesWithOnlyKeepUsedAttributes.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\Dependencies\AttributeDefinedAndUsedInOtherAssemblyIsKept_Lib.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UnusedAttributePreservedViaLinkXmlIsKept.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UnusedAttributeTypeOnAssemblyIsRemoved.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UnusedAttributeTypeOnEventIsRemoved.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UnusedAttributeTypeOnMethodIsRemoved.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UnusedAttributeTypeOnParameterIsRemoved.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UnusedAttributeTypeOnPropertyIsRemoved.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UnusedAttributeTypeOnTypeIsRemoved.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UsedAttributeTypeOnAssemblyIsKept.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UsedAttributeTypeOnEventIsKept.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UsedAttributeTypeOnMethodIsKept.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UsedAttributeTypeOnModuleIsKept.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UsedAttributeTypeOnParameterIsKept.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UsedAttributeTypeOnPropertyIsKept.cs" />
+    <Compile Include="Attributes\OnlyKeepUsed\UsedAttributeTypeOnTypeIsKept.cs" />
     <Compile Include="Attributes\SecurityAttributesOnUsedMethodAreKept.cs" />
     <Compile Include="Attributes\SecurityAttributesOnUsedTypeAreKept.cs" />
     <Compile Include="Attributes\Dependencies\AssemblyAttributeIsRemovedIfOnlyTypesUsedInAssembly_Lib.cs" />
@@ -60,7 +82,9 @@
     <Compile Include="Basic\NestedDelegateInvokeMethodsPreserved.cs" />
     <Compile Include="Basic\UninvokedInterfaceMemberGetsRemoved.cs" />
     <Compile Include="Basic\UnusedDelegateGetsRemoved.cs" />
+    <Compile Include="Basic\UnusedEnumGetsRemoved.cs" />
     <Compile Include="Basic\UnusedEventGetsRemoved.cs" />
+    <Compile Include="Basic\UsedEnumIsKept.cs" />
     <Compile Include="Basic\UsedEventOnInterfaceIsKept.cs" />
     <Compile Include="Basic\UnusedFieldGetsRemoved.cs" />
     <Compile Include="Basic\UnusedMethodGetsRemoved.cs" />
@@ -98,6 +122,10 @@
     <Compile Include="Resources\NonLinkerEmbeddedResourceHasNoImpact.cs" />
     <Compile Include="TestFramework\CanCompileILAssembly.cs" />
     <Compile Include="TestFramework\CanCompileTestCaseWithDebugPdbs.cs" />
+    <Compile Include="TestFramework\CanCompileTestCaseWithCsc.cs" />
+    <Compile Include="TestFramework\CanCompileTestCaseWithMsc.cs" />
+    <Compile Include="TestFramework\Dependencies\CanCompileTestCaseWithCsc_Lib.cs" />
+    <Compile Include="TestFramework\Dependencies\CanCompileTestCaseWithMcs_Lib.cs" />
     <Compile Include="TestFramework\VerifyDefineAttributeBehavior.cs" />
     <None Include="TypeForwarding\Dependencies\ForwarderLibrary.cs" />
     <Compile Include="TestFramework\VerifyResourceInAssemblyAttributesBehavior.cs" />
@@ -185,6 +213,7 @@
     <Compile Include="LinkXml\PreserveBackingFieldWhenPropertyIsKept.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Attributes\OnlyKeepUsed\UnusedAttributePreservedViaLinkXmlIsKept.xml" />
     <Content Include="LinkXml\CanPreserveTypesUsingRegex.xml" />
     <Content Include="LinkXml\CanPreserveAnExportedType.xml" />
     <Content Include="LinkXml\CanPreserveExportedTypesUsingRegex.xml" />
@@ -209,6 +238,8 @@
     <Content Include="Resources\Dependencies\EmbeddedLinkXmlFileIsNotProcessedWhenCoreLinkActionIsSkip.xml" />
     <Content Include="Resources\Dependencies\EmbeddedLinkXmlFileIsProcessed.xml" />
     <Content Include="Resources\Dependencies\NonLinkerEmbeddedResourceHasNoImpact.xml" />
+    <Content Include="TestFramework\Dependencies\CanCompileTestCaseWithCsc.txt" />
+    <Content Include="TestFramework\Dependencies\CanCompileTestCaseWithMcs.txt" />
     <Content Include="TestFramework\Dependencies\VerifyResourceInAssemblyAttributesBehavior.txt" />
     <Content Include="LinkXml\PreserveBackingFieldWhenPropertyIsKept.xml" />
   </ItemGroup>
