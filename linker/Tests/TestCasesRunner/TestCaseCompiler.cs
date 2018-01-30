@@ -221,7 +221,7 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 
 			var vswherePath = Environment.ExpandEnvironmentVariables ("%ProgramFiles(x86)%\\Microsoft Visual Studio\\Installer\\vswhere.exe");
 			if (!File.Exists (vswherePath))
-				Assert.Fail ($"Unable to locate csc.exe on windows because vshwere.exe was not found at {vswherePath}");
+				Assert.Ignore ($"Unable to locate csc.exe on windows because vshwere.exe was not found at {vswherePath}");
 
 			process.StartInfo.FileName = vswherePath;
 			process.StartInfo.Arguments = "-latest -products * -requires Microsoft.Component.MSBuild -property installationPath";
