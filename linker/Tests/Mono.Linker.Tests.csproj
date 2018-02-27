@@ -49,9 +49,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\external\cecil\Mono.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil">
+    <Reference Include="Mono.Cecil.Pdb">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\external\cecil\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\external\cecil\Mono.Cecil.Mdb.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

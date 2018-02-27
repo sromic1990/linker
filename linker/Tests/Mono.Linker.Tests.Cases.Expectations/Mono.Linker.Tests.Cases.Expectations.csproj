@@ -55,6 +55,7 @@
     <Compile Include="Assertions\KeptTypeInAssemblyAttribute.cs" />
     <Compile Include="Assertions\RemovedAssemblyAttribute.cs" />
     <Compile Include="Assertions\RemovedMemberInAssemblyAttribute.cs" />
+    <Compile Include="Assertions\RemovedPseudoAttributeAttribute.cs" />
     <Compile Include="Assertions\RemovedResourceInAssemblyAttribute.cs" />
     <Compile Include="Assertions\RemovedSymbolsAttribute.cs" />
     <Compile Include="Assertions\RemovedTypeInAssemblyAttribute.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Metadata\NotATestCaseAttribute.cs" />
     <Compile Include="Metadata\ReferenceAttribute.cs" />
     <Compile Include="Metadata\SandboxDependencyAttribute.cs" />
+    <Compile Include="Metadata\SkipUnresolvedAttribute.cs" />
     <Compile Include="Assertions\KeptBaseTypeAttribute.cs" />
     <Compile Include="Assertions\KeptInterfaceAttribute.cs" />
     <Compile Include="Assertions\KeptAttributeAttribute.cs" />
