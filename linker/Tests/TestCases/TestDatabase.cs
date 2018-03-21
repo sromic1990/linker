@@ -78,6 +78,11 @@ namespace Mono.Linker.Tests.TestCases
 		{
 			return NUnitCasesByPrefix ("Symbols.");
 		}
+		
+		public static IEnumerable<TestCaseData> SerializationTests ()
+		{
+			return NUnitCasesByPrefix ("Serialization.");
+		}
 
 		public static IEnumerable<TestCaseData> OtherTests()
 		{
@@ -97,6 +102,7 @@ namespace Mono.Linker.Tests.TestCases
 					.Concat(TestFrameworkTests ())
 					.Concat(ReflectionTests ())
 					.Concat(SymbolsTests ())
+					.Concat(SerializationTests ())
 					.Select(c => ((TestCase)c.Arguments[0]).ReconstructedFullTypeName));
 
 			return AllCases().Where(c => !allGroupedTestNames.Contains(c.ReconstructedFullTypeName)).Select(c => CreateNUnitTestCase(c, c.DisplayName));

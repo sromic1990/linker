@@ -148,6 +148,12 @@ namespace Mono.Linker {
 							continue;
 						}
 
+						if (token == "--strip-serialization") {
+							if (bool.Parse (GetParam ()))
+								p.AddStepBefore (typeof (MarkStep), new RemoveSerializationStep ());
+							continue;
+						}
+
 						switch (token [2]) {
 						case 'v':
 							Version ();
