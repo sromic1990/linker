@@ -1104,19 +1104,7 @@ namespace Mono.Linker.Steps {
 		{
 			if (!method.HasCustomAttributes)
 				return false;
-			foreach (var ca in method.CustomAttributes) {
-				var cat = ca.AttributeType;
-				if (cat.Namespace != "System.Runtime.Serialization")
-					continue;
-				switch (cat.Name) {
-				case "OnDeserializedAttribute":
-				case "OnDeserializingAttribute":
-				case "OnSerializedAttribute":
-				case "OnSerializingAttribute":
-					return true;
-				}
-			}
-			return false;
+			return method.CustomAttributes.Any (CustomAttributeExtensions.IsSerializationAttribute);
 		}
 
 		static bool IsSerializable (TypeDefinition td)
