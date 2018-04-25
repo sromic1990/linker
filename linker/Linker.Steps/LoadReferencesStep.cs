@@ -56,6 +56,57 @@ namespace Mono.Linker.Steps {
 					throw new LoadException (string.Format ("Error while processing references of '{0}'", assembly.FullName), ex);
 				}
 			}
+			
+			ProcessReferencesInCustomAttributes (assembly);
+		}
+		
+		void ProcessReferencesInCustomAttributes (AssemblyDefinition assembly)
+		{
+			ProcessCustomAttributes (assembly);
+			ProcessCustomAttributes (assembly.MainModule);
+
+			foreach (var type in assembly.AllDefinedTypes ()) {
+				ProcessCustomAttributes (type);
+				foreach (var member in type.AllMembers ())
+					ProcessCustomAttributes (member);
+			}
+		}
+
+		void ProcessCustomAttributes (ICustomAttributeProvider provider)
+		{
+			if (!provider.HasCustomAttributes)
+				return;
+			
+			foreach (var arg in provider.AllCustomAttributeArguments ())
+				ProcessAssembliesOfTypeReferences (arg);
+		}
+
+		void ProcessAssembliesOfTypeReferences (CustomAttributeArgument argument)
+		{
+			var at = argument.Type;
+			if (at.IsArray) {
+				var et = at.GetElementType ();
+				if (et.Namespace != "System" || et.Name != "Type")
+					return;
+
+				if (argument.Value == null)
+					return;
+
+				foreach (var cac in (CustomAttributeArgument[]) argument.Value)
+					ProcessAssemblyOf ((TypeReference) cac.Value);
+			} else if (at.Namespace == "System" && at.Name == "Type") {
+				ProcessAssemblyOf ((TypeReference) argument.Value);
+			}
+		}
+
+		void ProcessAssemblyOf (TypeReference type)
+		{
+			var td = type.Resolve ();
+			if (td == null)
+				return;
+
+			Context.Resolve (td.Module.Assembly.MainModule);
+			ProcessReferences (td.Module.Assembly);
 		}
 	}
 }
