@@ -282,7 +282,7 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 				}
 
 				var originalMethodMember = originalType.Methods.FirstOrDefault (m => m.GetSignature () == memberName);
-				if (originalMethodMember != null) {
+				if (originalMethodMember != null || memberName.StartsWith("$__Stripped")) {
 					var linkedMethod = linkedType.Methods.FirstOrDefault (m => m.GetSignature () == memberName);
 					if (linkedMethod == null)
 						Assert.Fail ($"Method `{memberName}` on Type `{originalType}` should have been kept");
