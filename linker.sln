@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Linker.Tests.Cases.Exp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil.Mdb", "cecil\symbols\mdb\Mono.Cecil.Mdb.csproj", "{8559DD7F-A16F-46D0-A05A-9139FAEBA8FD}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Mono.Linker.Tests.Cases.FSharp", "linker\Tests\Mono.Linker.Tests.Cases.FSharp\Mono.Linker.Tests.Cases.FSharp.fsproj", "{E68E41CF-F9BD-419F-96FF-13D20A558E81}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +143,22 @@ Global
 		{2C26601F-3E2F-45B9-A02F-58EE9296E19E}.netstandard_Release|Any CPU.Build.0 = Release|Any CPU
 		{2C26601F-3E2F-45B9-A02F-58EE9296E19E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C26601F-3E2F-45B9-A02F-58EE9296E19E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.net_3_5_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.net_3_5_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.net_3_5_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.net_3_5_Release|Any CPU.Build.0 = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.net_4_0_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.net_4_0_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.net_4_0_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.net_4_0_Release|Any CPU.Build.0 = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.netstandard_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.netstandard_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.netstandard_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.netstandard_Release|Any CPU.Build.0 = Debug|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E68E41CF-F9BD-419F-96FF-13D20A558E81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

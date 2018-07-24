@@ -107,6 +107,12 @@ namespace Mono.Linker.Tests.TestCases
 		{
 			Run (testCase);
 		}
+		
+		[TestCaseSource (typeof (TestDatabase), nameof (TestDatabase.FSharpBasicTests))]
+		public void FSharpBasicTests (TestCase testCase)
+		{
+			Run (testCase);
+		}
 
 		protected virtual void Run (TestCase testCase)
 		{

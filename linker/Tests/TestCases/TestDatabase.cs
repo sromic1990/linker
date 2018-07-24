@@ -95,13 +95,21 @@ namespace Mono.Linker.Tests.TestCases
 		{
 			return NUnitCasesByPrefix ("Advanced.");
 		}
+		
+		public static IEnumerable<TestCaseData> FSharpBasicTests ()
+		{
+			return NUnitCasesByPrefix ("FSharp.Basic.");
+		}
 
 		public static TestCaseCollector CreateCollector ()
 		{
 			string rootSourceDirectory;
 			string testCaseAssemblyPath;
 			GetDirectoryPaths (out rootSourceDirectory, out testCaseAssemblyPath);
-			return new TestCaseCollector (rootSourceDirectory, testCaseAssemblyPath);
+			string fsharpRootSourceDirectory;
+			string fsharpTestCaseAssemblyPath;
+			GetFSharpDirectoryPaths (out fsharpRootSourceDirectory, out fsharpTestCaseAssemblyPath);
+			return new TestCaseCollector (rootSourceDirectory, testCaseAssemblyPath, fsharpRootSourceDirectory, fsharpTestCaseAssemblyPath);
 		}
 
 		static IEnumerable<TestCase> AllCases ()
@@ -135,6 +143,13 @@ namespace Mono.Linker.Tests.TestCases
 			var thisDirectory = Path.GetDirectoryName(thisFile);
 			rootSourceDirectory = Path.GetFullPath(Path.Combine(thisDirectory, "..", "Mono.Linker.Tests.Cases"));
 			testCaseAssemblyPath = Path.GetFullPath(Path.Combine(rootSourceDirectory, "bin", "Debug", "Mono.Linker.Tests.Cases.dll"));
+		}
+		
+		static void GetFSharpDirectoryPaths(out string rootSourceDirectory, out string testCaseAssemblyPath, [CallerFilePath] string thisFile = null)
+		{
+			var thisDirectory = Path.GetDirectoryName(thisFile);
+			rootSourceDirectory = Path.GetFullPath(Path.Combine(thisDirectory, "..", "Mono.Linker.Tests.Cases.FSharp"));
+			testCaseAssemblyPath = Path.GetFullPath(Path.Combine(rootSourceDirectory, "bin", "Debug", "Mono.Linker.Tests.Cases.FSharp.dll"));
 		}
 	}
 }

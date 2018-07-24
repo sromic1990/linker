@@ -1,6 +1,7 @@
 ﻿﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 using Mono.Linker.Tests.Extensions;
 using Mono.Linker.Tests.TestCases;
@@ -48,7 +49,18 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 		public NPath ResourcesDirectory { get; }
 
 		public IEnumerable<NPath> SourceFiles {
-			get { return _directory.Files ("*.cs"); }
+			get
+			{
+				var sourcefiles = _directory.Files ("*.cs");
+				if (sourcefiles.Any())
+					return sourcefiles;
+				
+				sourcefiles = _directory.Files ("*.fs");
+				if (sourcefiles.Any())
+					return sourcefiles;
+				
+				throw new FileNotFoundException("No source files found");
+			}
 		}
 
 		public IEnumerable<NPath> LinkXmlFiles {

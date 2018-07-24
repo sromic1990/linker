@@ -9,6 +9,10 @@ namespace Mono.Linker.Tests.TestCases {
 			OriginalTestCaseAssemblyPath = originalTestCaseAssemblyPath;
 			Name = sourceFile.FileNameWithoutExtension;
 			DisplayName = $"{sourceFile.RelativeTo (rootCasesDirectory).Parent.ToString (SlashMode.Forward).Replace ('/', '.')}.{sourceFile.FileNameWithoutExtension}";
+			
+			// HACK, works for now, but should replace with something that doesn't for a prefix on all fsharp tests
+			if (sourceFile.ExtensionWithDot == ".fs")
+				DisplayName = $"FSharp.{DisplayName}";
 
 			// A little hacky, but good enough for name.  No reason why namespace & type names
 			// should not follow the directory structure

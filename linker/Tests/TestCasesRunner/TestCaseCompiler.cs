@@ -151,6 +151,10 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 			var sourceFiles = directory.Files ("*.cs").ToArray ();
 			if (sourceFiles.Length > 0)
 				return sourceFiles;
+			
+			sourceFiles = directory.Files ("*.fs").ToArray ();
+			if (sourceFiles.Length > 0)
+				return sourceFiles;
 
 			sourceFiles = directory.Files ("*.il").ToArray ();
 			if (sourceFiles.Length > 0)
@@ -176,6 +180,9 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 		{
 			if (options.SourceFiles.Any (path => path.ExtensionWithDot == ".cs"))
 				return CompileCSharpAssembly (options);
+			
+			if (options.SourceFiles.Any (path => path.ExtensionWithDot == ".fs"))
+				return CompileFSharpAssembly (options);
 
 			if (options.SourceFiles.Any (path => path.ExtensionWithDot == ".il"))
 				return CompileIlAssembly (options);
@@ -324,6 +331,11 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 				return CompileCSharpAssemblyWithMsc (options);
 
 			throw new ArgumentException ($"Invalid compiler value `{options.CompilerToUse}`");
+		}
+
+		protected NPath CompileFSharpAssembly(CompilerOptions options)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected NPath CompileIlAssembly (CompilerOptions options)

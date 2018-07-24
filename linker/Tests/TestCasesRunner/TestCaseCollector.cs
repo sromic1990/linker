@@ -10,21 +10,25 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 	public class TestCaseCollector {
 		private readonly NPath _rootDirectory;
 		private readonly NPath _testCaseAssemblyPath;
+		private readonly NPath _fsharpRootDirectory;
+		private readonly NPath _fsharpTestCaseAssemblyPath;
 
-		public TestCaseCollector (string rootDirectory, string testCaseAssemblyPath)
-			: this (rootDirectory.ToNPath (), testCaseAssemblyPath.ToNPath ())
+		public TestCaseCollector (string rootDirectory, string testCaseAssemblyPath, string fsharpRootDirectory, string fsharpTestCaseAssemblyPath)
+			: this (rootDirectory.ToNPath (), testCaseAssemblyPath.ToNPath (), fsharpRootDirectory.ToNPath (), fsharpTestCaseAssemblyPath.ToNPath ())
 		{
 		}
 
-		public TestCaseCollector (NPath rootDirectory, NPath testCaseAssemblyPath)
+		public TestCaseCollector (NPath rootDirectory, NPath testCaseAssemblyPath, NPath fsharpRootDirectory, NPath fsharpTestCaseAssemblyPath)
 		{
 			_rootDirectory = rootDirectory;
 			_testCaseAssemblyPath = testCaseAssemblyPath;
+			_fsharpRootDirectory = fsharpRootDirectory;
+			_fsharpTestCaseAssemblyPath = fsharpTestCaseAssemblyPath;
 		}
 
 		public IEnumerable<TestCase> Collect ()
 		{
-			return Collect (AllSourceFiles ());
+			return Collect (AllSourceFiles ()).Concat (CollectFSharp (AllSourceFilesFSharp ().ToArray()));
 		}
 
 		public TestCase Collect (NPath sourceFile)
@@ -32,7 +36,7 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 			return Collect (new [] { sourceFile }).First ();
 		}
 
-		public IEnumerable<TestCase> Collect (IEnumerable<NPath> sourceFiles)
+		private IEnumerable<TestCase> Collect (IEnumerable<NPath> sourceFiles)
 		{
 			_rootDirectory.DirectoryMustExist ();
 			_testCaseAssemblyPath.FileMustExist ();
@@ -40,7 +44,21 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 			using (var caseAssemblyDefinition = AssemblyDefinition.ReadAssembly (_testCaseAssemblyPath.ToString ())) {
 				foreach (var file in sourceFiles) {
 					TestCase testCase;
-					if (CreateCase (caseAssemblyDefinition, file, out testCase))
+					if (CreateCase (caseAssemblyDefinition, file, _rootDirectory, _testCaseAssemblyPath, out testCase))
+						yield return testCase;
+				}
+			}
+		}
+		
+		private IEnumerable<TestCase> CollectFSharp (IEnumerable<NPath> sourceFiles)
+		{
+			_fsharpRootDirectory.DirectoryMustExist ();
+			_fsharpTestCaseAssemblyPath.FileMustExist ();
+
+			using (var caseAssemblyDefinition = AssemblyDefinition.ReadAssembly (_fsharpTestCaseAssemblyPath.ToString ())) {
+				foreach (var file in sourceFiles) {
+					TestCase testCase;
+					if (CreateCase (caseAssemblyDefinition, file, _fsharpRootDirectory, _fsharpTestCaseAssemblyPath, out testCase))
 						yield return testCase;
 				}
 			}
@@ -48,17 +66,27 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 
 		public IEnumerable<NPath> AllSourceFiles ()
 		{
-			_rootDirectory.DirectoryMustExist ();
+			return AllSourceFilesIn(_rootDirectory);
+		}
+		
+		public IEnumerable<NPath> AllSourceFilesFSharp ()
+		{
+			return AllSourceFilesIn(_fsharpRootDirectory);
+		}
 
-			foreach (var file in _rootDirectory.Files ("*.cs")) {
+		private static IEnumerable<NPath> AllSourceFilesIn(NPath directory)
+		{
+			directory.DirectoryMustExist ();
+
+			foreach (var file in directory.Files ().Where (IsSourceFile)) {
 				yield return file;
 			}
 
-			foreach (var subDir in _rootDirectory.Directories ()) {
+			foreach (var subDir in directory.Directories ()) {
 				if (subDir.FileName == "bin" || subDir.FileName == "obj" || subDir.FileName == "Properties")
 					continue;
 
-				foreach (var file in subDir.Files ("*.cs", true)) {
+				foreach (var file in subDir.Files (true).Where (IsSourceFile)) {
 
 					// Magic : Anything in a directory named Dependnecies is assumed to be a dependency to a test case
 					// and never a test itself
@@ -76,6 +104,11 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 			}
 		}
 
+		private static bool IsSourceFile (NPath path)
+		{
+			return path.ExtensionWithDot == ".cs" || path.ExtensionWithDot == ".fs";
+		}
+
 		public TestCase CreateIndividualCase (Type testCaseType)
 		{
 			_rootDirectory.DirectoryMustExist ();
@@ -87,16 +120,16 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 			using (var caseAssemblyDefinition = AssemblyDefinition.ReadAssembly (_testCaseAssemblyPath.ToString ()))
 			{
 				TestCase testCase;
-				if (!CreateCase (caseAssemblyDefinition, fullSourcePath, out testCase))
+				if (!CreateCase (caseAssemblyDefinition, fullSourcePath, _rootDirectory, _testCaseAssemblyPath, out testCase))
 					throw new ArgumentException ($"Could not create a test case for `{testCaseType}`.  Ensure the namespace matches it's location on disk");
 
 				return testCase;
 			}
 		}
 
-		private bool CreateCase (AssemblyDefinition caseAssemblyDefinition, NPath sourceFile, out TestCase testCase)
+		private static bool CreateCase (AssemblyDefinition caseAssemblyDefinition, NPath sourceFile, NPath rootDirectory, NPath testCaseAssemblyPath, out TestCase testCase)
 		{
-			var potentialCase = new TestCase (sourceFile, _rootDirectory, _testCaseAssemblyPath);
+			var potentialCase = new TestCase (sourceFile, rootDirectory, testCaseAssemblyPath);
 
 			var typeDefinition = FindTypeDefinition (caseAssemblyDefinition, potentialCase);
 
@@ -112,7 +145,7 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 			}
 
 			// Verify the class as a static main method
-			var mainMethod = typeDefinition.Methods.FirstOrDefault (m => m.Name == "Main");
+			var mainMethod = typeDefinition.Methods.FirstOrDefault (m => m.Name.ToLower() == "main");
 
 			if (mainMethod == null) {
 				Console.WriteLine ($"{typeDefinition} in {sourceFile} is missing a Main() method");
