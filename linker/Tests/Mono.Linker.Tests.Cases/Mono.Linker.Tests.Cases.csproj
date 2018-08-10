@@ -37,6 +37,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Advanced\Dependencies\PreserveDependencyMethodInNonReferencedAssemblyBase.cs" />
+    <Compile Include="Advanced\Dependencies\PreserveDependencyMethodInNonReferencedAssemblyLibrary.cs" />
+    <Compile Include="Advanced\PreserveDependencyMethodInNonReferencedAssembly.cs" />
     <Compile Include="Attributes.Debugger\DebuggerDisplayAttributeOnAssemblyUsingTarget.cs" />
     <Compile Include="Attributes.Debugger\DebuggerDisplayAttributeOnAssemblyUsingTargetTypeNameInOtherAssembly.cs" />
     <Compile Include="Attributes.Debugger\DebuggerDisplayAttributeOnAssemblyUsingTargetOnUnusedType.cs" />
