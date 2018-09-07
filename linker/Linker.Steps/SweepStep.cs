@@ -1,4 +1,4 @@
-//
+﻿//
 // SweepStep.cs
 //
 // Author:
@@ -50,7 +50,7 @@ namespace Mono.Linker.Steps {
 		{
 			assemblies = Context.Annotations.GetAssemblies ().ToArray ();
 			foreach (var assembly in assemblies) {
-				SweepAssembly (assembly);
+				ProcessAssembly (assembly);
 				if ((Annotations.GetAction (assembly) == AssemblyAction.Copy) &&
 					!Context.KeepTypeForwarderOnlyAssemblies) {
 						// Copy assemblies can still contain Type references with
@@ -73,36 +73,41 @@ namespace Mono.Linker.Steps {
 			}
 		}
 
-		protected virtual void SweepAssembly (AssemblyDefinition assembly)
+		protected override void ProcessAssembly (AssemblyDefinition assembly)
 		{
 			switch (Annotations.GetAction (assembly)) {
-			case AssemblyAction.Link:
-				if (!IsMarkedAssembly (assembly)) {
-					RemoveAssembly (assembly);
+				case AssemblyAction.Link:
+					if (!IsMarkedAssembly (assembly)) {
+						RemoveAssembly (assembly);
+						return;
+					}
+					break;
+
+				case AssemblyAction.AddBypassNGenUsed:
+					if (!IsMarkedAssembly (assembly)) {
+						RemoveAssembly (assembly);
+					} else {
+						Annotations.SetAction (assembly, AssemblyAction.AddBypassNGen);
+					}
 					return;
-				}
-				break;
 
-			case AssemblyAction.AddBypassNGenUsed:
-				if (!IsMarkedAssembly (assembly)) {
-					RemoveAssembly (assembly);
-				} else {
-					Annotations.SetAction (assembly, AssemblyAction.AddBypassNGen);
-				}
-				return;
+				case AssemblyAction.CopyUsed:
+					if (!IsMarkedAssembly (assembly)) {
+						RemoveAssembly (assembly);
+					} else {
+						Annotations.SetAction (assembly, AssemblyAction.Copy);
+					}
+					return;
 
-			case AssemblyAction.CopyUsed:
-				if (!IsMarkedAssembly (assembly)) {
-					RemoveAssembly (assembly);
-				} else {
-					Annotations.SetAction (assembly, AssemblyAction.Copy);
-				}
-				return;
-
-			default:
-				return;
+				default:
+					return;
 			}
+			
+			SweepAssembly (assembly);
+		}
 
+		protected virtual void SweepAssembly (AssemblyDefinition assembly)
+		{
 			var types = new List<TypeDefinition> ();
 
 			foreach (TypeDefinition type in assembly.MainModule.Types) {
