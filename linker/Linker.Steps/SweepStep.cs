@@ -1,4 +1,4 @@
-﻿//
+//
 // SweepStep.cs
 //
 // Author:
@@ -134,7 +134,7 @@ namespace Mono.Linker.Steps {
 			return Annotations.IsMarked (assembly.MainModule);
 		}
 
-		void RemoveAssembly (AssemblyDefinition assembly)
+		protected virtual void RemoveAssembly (AssemblyDefinition assembly)
 		{
 			Annotations.SetAction (assembly, AssemblyAction.Delete);
 
