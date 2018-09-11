@@ -477,6 +477,11 @@ namespace Mono.Linker.Steps {
 			if (!Annotations.IsMarked (resolvedConstructor.Module) && !Annotations.IsMarked (ca.AttributeType))
 				return false;
 
+			// If module the custom attribute appears in has not been marked yet, then don't mark the attribute
+			// i.e Don't mark custom attributes on an assembly until the assembly has been marked
+			if (!Annotations.IsMarked (ca.AttributeType.Module))
+				return false;
+
 			if (ca.Constructor.DeclaringType.Namespace == "System.Diagnostics") {
 				string attributeName = ca.Constructor.DeclaringType.Name;
 				if (attributeName == "DebuggerDisplayAttribute" || attributeName == "DebuggerTypeProxyAttribute") {
