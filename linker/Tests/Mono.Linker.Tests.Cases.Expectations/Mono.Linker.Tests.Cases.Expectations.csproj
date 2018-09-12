@@ -50,6 +50,7 @@
     <Compile Include="Assertions\KeptInitializerData.cs" />
     <Compile Include="Assertions\KeptMemberAttribute.cs" />
     <Compile Include="Assertions\KeptMemberInAssemblyAttribute.cs" />
+    <Compile Include="Assertions\KeptReferenceAttribute.cs" />
     <Compile Include="Assertions\KeptResourceAttribute.cs" />
     <Compile Include="Assertions\KeptResourceInAssemblyAttribute.cs" />
     <Compile Include="Assertions\KeptSecurityAttribute.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Metadata\SandboxDependencyAttribute.cs" />
     <Compile Include="Metadata\SetupLinkerKeepDebugMembersAttribute.cs" />
     <Compile Include="Metadata\SetupLinkerLinkPublicAndFamilyAttribute.cs" />
+    <Compile Include="Metadata\SetupLinkerUserActionAttribute.cs" />
     <Compile Include="Metadata\SkipUnresolvedAttribute.cs" />
     <Compile Include="Metadata\StripResourcesAttribute.cs" />
     <Compile Include="Assertions\KeptBaseTypeAttribute.cs" />

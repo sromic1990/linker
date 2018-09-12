@@ -274,14 +274,13 @@ namespace Mono.Linker.Steps {
 
 		protected virtual bool IsUserDependencyMarker (TypeReference type)
 		{
-			return type.Name == "PreserveDependencyAttribute" &&
-				       type.Namespace == "System.Runtime.CompilerServices";
+			return PreserveDependencyLookupStep.IsPreserveDependencyAttribute (type);
 		}
 
 		protected virtual void MarkUserDependency (MethodReference context, CustomAttribute ca)
 		{
-			var args = ca.ConstructorArguments;
-			if (args.Count == 2 && args[1].Value is string condition) {
+			if (ca.HasProperties && ca.Properties [0].Name == "Condition") {
+				var condition = ca.Properties [0].Argument.Value as string;
 				switch (condition) {
 				case "":
 				case null:
@@ -297,57 +296,51 @@ namespace Mono.Linker.Steps {
 				}
 			}
 
-			if (args.Count >= 1 && args[0].Value is string dependency) {
-				string member = null;
-				string type = null;
-				string[] signature = null;
-				TypeDefinition td = null;
-
-				var sign_start = dependency.IndexOf ('(');
-				var sign_end = dependency.LastIndexOf (')');
-				if (sign_start > 0 && sign_end > sign_start) {
-					var parameters = dependency.Substring (sign_start + 1, sign_end - sign_start - 1).Replace (" ", "");
-					signature = string.IsNullOrEmpty (parameters) ? Array.Empty<string> () : parameters.Split (',');
-					var idx = dependency.LastIndexOf ('.', sign_start);
-					if (idx > 0) {
-						member = dependency.Substring (idx + 1, sign_start - idx - 1).TrimEnd ();
-						type = dependency.Substring (0, idx);
-					} else {
-						member = dependency.Substring (0, sign_start - 1);
-						td = context.DeclaringType.Resolve ();
-					}
-				} else if (sign_start < 0) {
-					var idx = dependency.LastIndexOf ('.');
-					if (idx > 0) {
-						member = dependency.Substring (idx + 1);
-						type = dependency.Substring (0, idx);
-					} else {
-						member = dependency;
-						td = context.DeclaringType.Resolve ();
-					}
+			AssemblyDefinition assembly;
+			var args = ca.ConstructorArguments;
+			if (args.Count >= 3 && args [2].Value is string assemblyName) {
+				if (!_context.Resolver.AssemblyCache.TryGetValue (assemblyName, out assembly)) {
+					_context.Logger.LogMessage (MessageImportance.Low, $"Could not resolve '{assemblyName}' assembly dependency");
+					return;
 				}
+			} else {
+				assembly = null;
+			}
+
+			TypeDefinition td = null;
+			if (args.Count >= 2 && args [1].Value is string typeName) {
+				td = FindType (assembly ?? context.Module.Assembly, typeName);
 
 				if (td == null) {
-					if (type == null) {
-						_context.Logger.LogMessage (MessageImportance.Low, $"Could not resolve '{dependency}' dependency");
-						return;
-					}
-
-					td = FindType (context.Module.Assembly, type);
-					if (td == null) {
-						_context.Logger.LogMessage (MessageImportance.Low, $"Could not find '{dependency}' dependency");
-						return;
-					}
+					_context.Logger.LogMessage (MessageImportance.Low, $"Could not resolve '{typeName}' type dependency");
+					return;
 				}
-
-				if (MarkDependencyMethod (td, member, signature))
-					return;
-
-				if (MarkDependencyField (td, member))
-					return;
-
-				_context.Logger.LogMessage (MessageImportance.High, $"Could not resolve dependency member '{member}' declared in type '{dependency}'");
+			} else {
+				td = context.DeclaringType.Resolve ();
 			}
+
+			string member = null;
+			string[] signature = null;
+			if (args.Count >= 1 && args [0].Value is string memberSignature) {
+				memberSignature = memberSignature.Replace (" ", "");
+				var sign_start = memberSignature.IndexOf ('(');
+				var sign_end = memberSignature.LastIndexOf (')');
+				if (sign_start > 0 && sign_end > sign_start) {
+					var parameters = memberSignature.Substring (sign_start + 1, sign_end - sign_start - 1);
+					signature = string.IsNullOrEmpty (parameters) ? Array.Empty<string> () : parameters.Split (',');
+					member = memberSignature.Substring (0, sign_start);
+				} else {
+					member = memberSignature;
+				}
+			}
+
+			if (MarkDependencyMethod (td, member, signature))
+				return;
+
+			if (MarkDependencyField (td, member))
+				return;
+
+			_context.Logger.LogMessage (MessageImportance.High, $"Could not resolve dependency member '{member}' declared in type '{td.FullName}'");
 		}
 
 		static TypeDefinition FindType (AssemblyDefinition assembly, string fullName)
@@ -483,7 +476,7 @@ namespace Mono.Linker.Steps {
 			// then surely nothing is using this attribute and there is no need to mark it
 			if (!Annotations.IsMarked (resolvedConstructor.Module) && !Annotations.IsMarked (ca.AttributeType))
 				return false;
-			
+
 			if (ca.Constructor.DeclaringType.Namespace == "System.Diagnostics") {
 				string attributeName = ca.Constructor.DeclaringType.Name;
 				if (attributeName == "DebuggerDisplayAttribute" || attributeName == "DebuggerTypeProxyAttribute") {

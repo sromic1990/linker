@@ -37,6 +37,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Advanced\Dependencies\PreserveDependencyMethodInNonReferencedAssemblyBase2.cs" />
+    <Compile Include="Advanced\Dependencies\PreserveDependencyMethodInNonReferencedAssemblyChainedLibrary.cs" />
+    <Compile Include="Advanced\Dependencies\PreserveDependencyMethodInNonReferencedAssemblyChainedReferenceLibrary.cs" />
+    <Compile Include="Advanced\PreserveDependencyMethodInNonReferencedAssemblyChained.cs" />
+    <Compile Include="Advanced\PreserveDependencyMethodInNonReferencedAssemblyChainedReference.cs" />
+    <Compile Include="Advanced\PreserveDependencyMethodInNonReferencedAssemblyWithEmbeddedXml.cs" />
+    <Compile Include="Advanced\PreserveDependencyOnUnusedMethodInNonReferencedAssembly.cs" />
+    <Compile Include="Advanced\PreserveDependencyOnUnusedMethodInNonReferencedAssemblyWithCopyAction.cs" />
+    <Compile Include="Advanced\PreserveDependencyOnUnusedMethodInNonReferencedAssemblyWithEmbeddedXml.cs" />
     <Compile Include="Attributes.Debugger\DebuggerDisplayAttributeOnAssemblyUsingTarget.cs" />
     <Compile Include="Attributes.Debugger\DebuggerDisplayAttributeOnAssemblyUsingTargetTypeNameInOtherAssembly.cs" />
     <Compile Include="Attributes.Debugger\DebuggerDisplayAttributeOnAssemblyUsingTargetOnUnusedType.cs" />
@@ -165,6 +174,8 @@
     <Compile Include="CoreLink\NoSecurityPlusOnlyKeepUsedRemovesAllSecurityAttributesFromCoreLibraries.cs" />
     <Compile Include="Libraries\CanLinkPublicApisOfLibrary.cs" />
     <Compile Include="Libraries\DefaultLibraryLinkBehavior.cs" />
+    <Compile Include="Libraries\Dependencies\UserAssemblyActionWorks_Lib.cs" />
+    <Compile Include="Libraries\UserAssemblyActionWorks.cs" />
     <Compile Include="LinkXml\CanPreserveTypesUsingRegex.cs" />
     <Compile Include="LinkXml\CanPreserveAnExportedType.cs" />
     <None Include="LinkXml\Dependencies\CanPreserveAnExportedType_Forwarder.cs" />
@@ -362,8 +373,14 @@
     <Compile Include="Attributes.StructLayout\ExplicitClass.cs" />
     <Compile Include="Reflection\AssemblyImportedViaReflection.cs" />
     <Compile Include="Reflection\Dependencies\AssemblyDependency.cs" />
+    <Compile Include="Advanced\PreserveDependencyMethodInAssembly.cs" />
+    <Compile Include="Advanced\Dependencies\PreserveDependencyMethodInAssemblyLibrary.cs" />
+    <Compile Include="Advanced\Dependencies\PreserveDependencyMethodInNonReferencedAssemblyBase.cs" />
+    <Compile Include="Advanced\Dependencies\PreserveDependencyMethodInNonReferencedAssemblyLibrary.cs" />
+    <Compile Include="Advanced\PreserveDependencyMethodInNonReferencedAssembly.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Advanced\Dependencies\PreserveDependencyMethodInNonReferencedAssemblyLibrary.xml" />
     <Content Include="Attributes\OnlyKeepUsed\Dependencies\AssemblyWithUnusedAttributeOnReturnParameterDefinition.il" />
     <Content Include="Attributes\OnlyKeepUsed\UnusedAttributePreservedViaLinkXmlIsKept.xml" />
     <Content Include="LinkXml\CanPreserveTypesUsingRegex.xml" />
@@ -421,6 +438,7 @@
   <ItemGroup>
     <Folder Include="Attributes.StructLayout\" />
     <Folder Include="Reflection\Dependencies\" />
+    <Folder Include="Advanced\Dependencies\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

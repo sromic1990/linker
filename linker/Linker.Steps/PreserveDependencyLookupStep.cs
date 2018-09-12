@@ -1,10 +1,10 @@
-﻿//
-// LoadReferencesStep.cs
+//
+// PreserveDependencyLookupStep.cs
 //
 // Author:
-//   Jb Evain (jbevain@novell.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
-// (C) 2007 Novell, Inc.
+// Copyright (C) 2018  Microsoft Corporation
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,35 +27,45 @@
 //
 
 using System;
-using System.Collections.Generic;
-
 using Mono.Cecil;
 
 namespace Mono.Linker.Steps {
-
-	public class LoadReferencesStep : BaseStep {
-
-		readonly HashSet<AssemblyNameDefinition> references = new HashSet<AssemblyNameDefinition> ();
-
+	public class PreserveDependencyLookupStep : LoadReferencesStep {
 		protected override void ProcessAssembly (AssemblyDefinition assembly)
 		{
-			ProcessReferences (assembly);
-		}
+			var module = assembly.MainModule;
 
-		protected void ProcessReferences (AssemblyDefinition assembly)
-		{
-			if (!references.Add (assembly.Name))
-				return;
+			foreach (var type in module.Types) {
+				if (!type.HasMethods)
+					continue;
 
-			Context.RegisterAssembly (assembly);
+				foreach (var method in type.GetMethods ()) {
+					var md = method.Resolve ();
+					if (md?.HasCustomAttributes != true)
+						continue;
 
-			foreach (AssemblyDefinition referenceDefinition in Context.ResolveReferences (assembly)) {
-				try {
-					ProcessReferences (referenceDefinition);
-				} catch (Exception ex) {
-					throw new LoadException (string.Format ("Error while processing references of '{0}'", assembly.FullName), ex);
+					foreach (var ca in md.CustomAttributes) {
+						if (!IsPreserveDependencyAttribute (ca.AttributeType))
+							continue;
+
+						if (ca.ConstructorArguments.Count != 3)
+							continue;
+
+						var assemblyName = ca.ConstructorArguments [2].Value as string;
+						if (assemblyName == null)
+							continue;
+
+						var newDependency = Context.Resolve (new AssemblyNameReference (assemblyName, new Version ()));
+						if (newDependency != null)
+							ProcessReferences (newDependency);
+					}
 				}
 			}
+		}
+
+		public static bool IsPreserveDependencyAttribute (TypeReference tr)
+		{
+			return tr.Name == "PreserveDependencyAttribute" && tr.Namespace == "System.Runtime.CompilerServices";
 		}
 	}
 }
