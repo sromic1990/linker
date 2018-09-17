@@ -215,10 +215,10 @@ namespace Mono.Linker.Steps {
 				return;
 
 			foreach (MethodDefinition @override in overrides)
-				ProcessOverride (@override);
+				ProcessOverride (@override, method);
 		}
 
-		void ProcessOverride (MethodDefinition method)
+		void ProcessOverride (MethodDefinition method, MethodDefinition @base)
 		{
 			if (!Annotations.IsMarked (method.DeclaringType))
 				return;
@@ -227,6 +227,12 @@ namespace Mono.Linker.Steps {
 				return;
 
 			if (Annotations.IsMarked (method))
+				return;
+
+			if (!method.DeclaringType.IsValueType
+			    && !@base.IsAbstract
+			    && !@base.DeclaringType.IsInterface
+			    && !method.DeclaringType.Methods.Where (m => m.IsConstructor).Any (Annotations.IsMarked))
 				return;
 
 			MarkMethod (method);
