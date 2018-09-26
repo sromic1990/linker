@@ -18,12 +18,6 @@ namespace Mono.Linker.Tests.TestCases
 			Run (testCase);
 		}
 
-		[TestCaseSource (typeof (TestDatabase), nameof (TestDatabase.VirtualMethodsTests))]
-		public void VirtualMethodTests (TestCase testCase)
-		{
-			Run (testCase);
-		}
-
 		[TestCaseSource (typeof (TestDatabase), nameof (TestDatabase.XmlTests))]
 		public void XmlTests (TestCase testCase)
 		{
@@ -96,6 +90,12 @@ namespace Mono.Linker.Tests.TestCases
 			Run (testCase);
 		}
 		
+		[TestCaseSource (typeof (TestDatabase), nameof (TestDatabase.PreserveDependenciesTests))]
+		public void PreserveDependenciesTests (TestCase testCase)
+		{
+			Run (testCase);
+		}
+		
 		[TestCaseSource (typeof (TestDatabase), nameof (TestDatabase.SymbolsTests))]
 		public void SymbolsTests (TestCase testCase)
 		{
@@ -104,6 +104,30 @@ namespace Mono.Linker.Tests.TestCases
 		
 		[TestCaseSource (typeof (TestDatabase), nameof (TestDatabase.LibrariesTests))]
 		public void LibrariesTests (TestCase testCase)
+		{
+			Run (testCase);
+		}
+		
+		[TestCaseSource (typeof (TestDatabase), nameof (TestDatabase.InheritanceInterfaceTests))]
+		public void InheritanceInterfaceTests (TestCase testCase)
+		{
+			Run (testCase);
+		}
+		
+		[TestCaseSource (typeof (TestDatabase), nameof (TestDatabase.InheritanceAbstractClassTests))]
+		public void InheritanceAbstractClassTests (TestCase testCase)
+		{
+			Run (testCase);
+		}
+		
+		[TestCaseSource (typeof (TestDatabase), nameof (TestDatabase.InheritanceVirtualMethodsTests))]
+		public void InheritanceVirtualMethodsTests (TestCase testCase)
+		{
+			Run (testCase);
+		}
+		
+		[TestCaseSource (typeof (TestDatabase), nameof (TestDatabase.InheritanceComplexTests))]
+		public void InheritanceComplexTests (TestCase testCase)
 		{
 			Run (testCase);
 		}
