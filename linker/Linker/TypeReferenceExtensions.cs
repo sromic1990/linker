@@ -200,5 +200,25 @@ namespace Mono.Linker
 		{
 			return fullTypeName.Replace ('+', '/');
 		}
+		
+		public static bool DerivesFrom(this TypeReference type, TypeReference potentialBaseType, bool checkInterfaces = true)
+		{
+			while (type != null)
+			{
+				if (type == potentialBaseType)
+					return true;
+
+				if (checkInterfaces)
+				{
+					foreach (var @interface in type.Resolve().Interfaces)
+						if (@interface.InterfaceType == potentialBaseType)
+							return true;
+				}
+
+				type = type.Resolve().BaseType;
+			}
+
+			return false;
+		}
 	}
 }

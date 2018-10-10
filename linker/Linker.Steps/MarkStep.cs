@@ -1825,6 +1825,7 @@ namespace Mono.Linker.Steps {
 			MarkSomethingUsedViaReflection ("GetField", MarkFieldUsedViaReflection, body.Instructions);
 			MarkSomethingUsedViaReflection ("GetEvent", MarkEventUsedViaReflection, body.Instructions);
 			MarkTypeUsedViaReflection (body.Instructions);
+			MarkActivatorCreateInstance (body);
 		}
 
 		protected virtual void MarkInstruction (Instruction instruction)
@@ -1886,6 +1887,82 @@ namespace Mono.Linker.Steps {
 				return false;
 
 			return true;
+		}
+
+		void MarkActivatorCreateInstance(MethodBody body)
+		{
+			var instructions = body.Instructions;
+			for (var i = 0; i < instructions.Count; i++) {
+				var instruction = instructions [i];
+				
+				if (instruction.OpCode != OpCodes.Call && instruction.OpCode != OpCodes.Callvirt)
+					continue;
+				
+				var methodBeingCalled = instruction.Operand as MethodReference;
+				if (methodBeingCalled == null || methodBeingCalled.DeclaringType.Name != "Activator" || methodBeingCalled.DeclaringType.Namespace != "System")
+					continue;
+
+				if (methodBeingCalled.Name == "CreateInstance")
+				{
+					if (methodBeingCalled.Parameters.Count > 1)
+						throw new NotImplementedException("TODO : Implement");
+					
+					if (i + 2 > instructions.Count)
+						continue;
+
+					if (instructions[i + 1].OpCode.Code == Code.Isinst && instructions[i + 2].OpCode.Code == Code.Unbox_Any)
+					{
+						var instanceBeingCastedToType = instructions[i + 1].Operand as TypeReference;
+						if (instanceBeingCastedToType == null)
+							continue;
+
+						var typeToMark = FigureOutType(instanceBeingCastedToType, body);
+						if (typeToMark == null)
+							continue;
+						
+						MarkDefaultConstructor(typeToMark.Resolve());
+
+						foreach (var assembly in _context.GetAssemblies())
+						{
+							foreach (var type in assembly.MainModule.Types)
+							{
+								// TODO : Nested types
+
+								if (type.DerivesFrom(typeToMark))
+								{
+									MarkType(type);
+									MarkDefaultConstructor(type);
+								}
+							}
+						}
+					}
+					
+				}
+				else if(methodBeingCalled.Name == "CreateInstanceFrom")
+				{
+					// TODO : Could support this as well
+					continue;
+				}
+			}
+		}
+
+		TypeReference FigureOutType(TypeReference activationCastType, MethodBody callingBody)
+		{
+			if (!activationCastType.IsGenericInstance && !activationCastType.IsGenericParameter)
+				return activationCastType;
+
+//			var tmp = TypeReferenceExtensions.InflateGenericType((GenericInstanceType)activationCastType, activationCastType);
+
+			if (activationCastType is GenericParameter genericParameter)
+			{
+				if (!genericParameter.HasConstraints)
+					return null;
+
+				return genericParameter.Constraints[0];
+			}
+
+//			return TypeResolver.For(callingBody.Method.DeclaringType, callingBody.Method).Resolve(activationCastType);
+			return null;
 		}
 
 		void MarkSomethingUsedViaReflection (string reflectionMethod, Action<Collection<Instruction>, string, TypeDefinition, BindingFlags> markMethod, Collection<Instruction> instructions)
