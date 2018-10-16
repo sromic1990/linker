@@ -43,7 +43,6 @@
     <Compile Include="Assertions\KeptAssemblyAttribute.cs" />
     <Compile Include="Assertions\KeptAttribute.cs" />
     <Compile Include="Assertions\BaseExpectedLinkedBehaviorAttribute.cs" />
-    <Compile Include="Assertions\KeptAttributeInAssemblyAttribute.cs" />
     <Compile Include="Assertions\KeptAttributeOnFixedBufferTypeAttribute.cs" />
     <Compile Include="Assertions\KeptBackingFieldAttribute.cs" />
     <Compile Include="Assertions\KeptDelegateCacheFieldAttribute.cs" />
