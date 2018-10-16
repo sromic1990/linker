@@ -121,7 +121,6 @@
     <Compile Include="Attributes\OnlyKeepUsed\Dependencies\UnusedAttributeWithTypeForwarderIsRemoved_Lib.cs" />
     <Compile Include="Attributes\OnlyKeepUsed\AttributeDefinedAndUsedInOtherAssemblyIsKept.cs" />
     <Compile Include="Attributes\OnlyKeepUsed\AttributeUsedByAttributeIsKept.cs" />
-    <Compile Include="Attributes\OnlyKeepUsed\CoreLibraryUsedAssemblyAttributesAreKept.cs" />
     <Compile Include="Attributes\OnlyKeepUsed\FixedLengthArrayAttributesArePreserved.cs" />
     <Compile Include="Attributes\OnlyKeepUsed\ThreadStaticIsPreservedOnField.cs" />
     <Compile Include="Attributes\OnlyKeepUsed\UnusedAttributeOnReturnTypeIsRemoved.cs" />
