@@ -453,9 +453,12 @@ namespace Mono.Linker.Steps {
 				case "System.ThreadStaticAttribute":
 				case "System.ContextStaticAttribute":
 					return true;
+				// Attributes related to `fixed` keyword used to declare fixed length arrays
+				case "System.Runtime.CompilerServices.FixedBufferAttribute":
+					return true;
 				case "System.Runtime.InteropServices.InterfaceTypeAttribute":
 				case "System.Runtime.InteropServices.GuidAttribute":
-					return !_context.IsFeatureExcluded ("com");
+					return true;
 				}
 				
 				if (!Annotations.IsMarked (attr_type.Resolve ()))
@@ -463,6 +466,11 @@ namespace Mono.Linker.Steps {
 			}
 
 			return true;
+		}
+
+		protected virtual bool ShoulMarkTypeConstructor (TypeDefinition type)
+		{
+			return !type.IsBeforeFieldInit && _context.IsOptimizationEnabled (CodeOptimizations.BeforeFieldInit);
 		}
 
 		protected virtual bool ShouldMarkTopLevelCustomAttribute (AttributeProviderPair app, MethodDefinition resolvedConstructor)
@@ -813,6 +821,12 @@ namespace Mono.Linker.Steps {
 			MarkMarshalSpec (field);
 			DoAdditionalFieldProcessing (field);
 
+			var parent = reference.DeclaringType.Resolve ();
+			if (parent.IsBeforeFieldInit && !Annotations.HasPreservedStaticCtor (parent) && _context.IsOptimizationEnabled (CodeOptimizations.BeforeFieldInit)) {
+				if (MarkMethodIf (parent.Methods, IsStaticConstructor))
+					Annotations.SetPreservedStaticCtor (parent);
+			}
+
 			Annotations.Mark (field);
 		}
 
@@ -907,7 +921,10 @@ namespace Mono.Linker.Steps {
 
 			if (type.HasMethods) {
 				MarkMethodsIf (type.Methods, IsVirtualAndHasPreservedParent);
-				MarkMethodsIf (type.Methods, IsStaticConstructor);
+
+				if (ShoulMarkTypeConstructor (type) && MarkMethodIf (type.Methods, IsStaticConstructor))
+					Annotations.SetPreservedStaticCtor (type);
+
 				MarkMethodsIf (type.Methods, HasSerializationAttribute);
 			}
 
@@ -1237,6 +1254,18 @@ namespace Mono.Linker.Steps {
 					MarkMethod (method);
 		}
 
+		protected bool MarkMethodIf (Collection<MethodDefinition> methods, Func<MethodDefinition, bool> predicate)
+		{
+			foreach (MethodDefinition method in methods) {
+				if (predicate (method)) {
+					MarkMethod (method);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		static bool IsDefaultConstructor (MethodDefinition method)
 		{
 			return IsInstanceConstructor (method) && !method.HasParameters;
@@ -1433,10 +1462,12 @@ namespace Mono.Linker.Steps {
 				MarkMethods (type);
 				break;
 			case TypePreserve.Fields:
-				MarkFields (type, true, true);
+				if (!MarkFields (type, true, true))
+					_context.LogMessage ($"Type {type.FullName} has no fields to preserve");
 				break;
 			case TypePreserve.Methods:
-				MarkMethods (type);
+				if (!MarkMethods (type))
+					_context.LogMessage ($"Type {type.FullName} has no methods to preserve");
 				break;
 			}
 		}
@@ -1459,10 +1490,10 @@ namespace Mono.Linker.Steps {
 			MarkMethodCollection (list);
 		}
 
-		protected void MarkFields (TypeDefinition type, bool includeStatic, bool markBackingFieldsOnlyIfPropertyMarked = false)
+		protected bool MarkFields (TypeDefinition type, bool includeStatic, bool markBackingFieldsOnlyIfPropertyMarked = false)
 		{
 			if (!type.HasFields)
-				return;
+				return false;
 
 			foreach (FieldDefinition field in type.Fields) {
 				if (!includeStatic && field.IsStatic)
@@ -1482,6 +1513,8 @@ namespace Mono.Linker.Steps {
 				}
 				MarkField (field);
 			}
+
+			return true;
 		}
 
 		static PropertyDefinition SearchPropertiesForMatchingFieldDefinition (FieldDefinition field)
@@ -1511,10 +1544,13 @@ namespace Mono.Linker.Steps {
 			}
 		}
 
-		protected virtual void MarkMethods (TypeDefinition type)
+		protected virtual bool MarkMethods (TypeDefinition type)
 		{
-			if (type.HasMethods)
-				MarkMethodCollection (type.Methods);
+			if (!type.HasMethods)
+				return false;
+
+			MarkMethodCollection (type.Methods);
+			return true;
 		}
 
 		void MarkMethodCollection (IList<MethodDefinition> methods)
