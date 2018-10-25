@@ -7,7 +7,9 @@ namespace Mono.Linker.Tests.Cases.LinkXml {
 		}
 
 		[Kept]
+		[KeptMember (".ctor()")]
 		abstract class Base {
+			[Kept]
 			public abstract void BaseMethod ();
 		}
 

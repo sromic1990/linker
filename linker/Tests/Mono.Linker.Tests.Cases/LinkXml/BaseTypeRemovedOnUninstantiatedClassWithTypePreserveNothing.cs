@@ -6,7 +6,6 @@ namespace Mono.Linker.Tests.Cases.LinkXml {
 		{
 		}
 
-		[Kept]
 		abstract class Base {
 			public abstract void BaseMethod ();
 		}
