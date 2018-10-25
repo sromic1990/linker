@@ -249,8 +249,7 @@ namespace Mono.Linker.Steps {
 				return;
 
 			// We don't need to mark overrides until it is possible that the type could be instantiated
-			// Note : The base type is interface check should be removed once we have base type sweeping
-			if (!Annotations.IsInstantiated (method.DeclaringType) && @base.DeclaringType.IsInterface)
+			if (!Annotations.IsInstantiated (method.DeclaringType) && !Annotations.IsBaseRequired (method.DeclaringType))
 				return;
 
 			MarkMethod (method);
@@ -848,7 +847,7 @@ namespace Mono.Linker.Steps {
 			while (_onlyIfInstantiated.Count != 0) {
 				var type = _onlyIfInstantiated.Dequeue ();
 
-				if (!Annotations.IsInstantiated (type)) {
+				if (!Annotations.IsInstantiated (type) && !Annotations.IsBaseRequired (type)) {
 					skippedItems.Add (type);
 					continue;
 				}
@@ -951,7 +950,6 @@ namespace Mono.Linker.Steps {
 			Tracer.Push (type);
 
 			MarkScope (type.Scope);
-			MarkType (type.BaseType);
 			MarkType (type.DeclaringType);
 			MarkCustomAttributes (type);
 			MarkSecurityDeclarations (type);
@@ -1803,6 +1801,8 @@ namespace Mono.Linker.Steps {
 		protected virtual void MarkRequirementsForInstantiatedTypes (TypeDefinition type)
 		{
 			Annotations.MarkInstantiated (type);
+			Annotations.MarkBaseRequired (type);
+			MarkType (type.BaseType);
 			MarkInterfaceImplementations (type);
 			MarkMethodsIf (type.Methods, IsVirtualAndHasPreservedParent);
 			DoAdditionalInstantiatedTypeProcessing (type);
@@ -1813,6 +1813,9 @@ namespace Mono.Linker.Steps {
 			var base_methods = Annotations.GetBaseMethods (method);
 			if (base_methods == null)
 				return;
+
+			// Once an override method is marked for any reason we can no longer change the base class
+			Annotations.MarkBaseRequired (method.DeclaringType);
 
 			foreach (MethodDefinition base_method in base_methods) {
 				if (base_method.DeclaringType.IsInterface && !method.DeclaringType.IsInterface)
