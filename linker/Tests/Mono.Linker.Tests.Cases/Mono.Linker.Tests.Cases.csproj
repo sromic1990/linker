@@ -170,10 +170,18 @@
     <Compile Include="Basic\UsedStructIsKept.cs" />
     <Compile Include="CoreLink\CanIncludeI18nAssemblies.cs" />
     <Compile Include="CoreLink\NoSecurityPlusOnlyKeepUsedRemovesAllSecurityAttributesFromCoreLibraries.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\AbstractBaseCanBeRemovedFromClassWithOnlyStaticMethodUsed.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\AbstractBaseCanBeRemovedFromClassWithOnlyStaticMethodUsed1.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\AbstractBaseCanBeRemovedFromClassWithOnlyStaticMethodUsedMultiBase.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\AbstractBaseCanBeRemovedFromClassWithOnlyStaticMethodUsedWithCctor.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\ClassDerivedFromObject.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesMethodsWhenNoOverrides.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethod.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedAbstractMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedVirtualMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfAbstractMethodIsKept.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfVirtualMethodIsKept.cs" />
+    <Compile Include="Inheritance.Complex\NoKeptCtor\ClassWithBaseAndInterfacesWithOnlyStaticMethodUsed.cs" />
     <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceWithInterfaceFromOtherAssemblyWhenExplicitMethodUsed_Lib.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassImplementingInterfaceMethodsNested.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassImplementingInterfaceMethodsNested2.cs" />
@@ -221,6 +229,8 @@
     <Compile Include="Libraries\DefaultLibraryLinkBehavior.cs" />
     <Compile Include="Libraries\Dependencies\UserAssemblyActionWorks_Lib.cs" />
     <Compile Include="Libraries\UserAssemblyActionWorks.cs" />
+    <Compile Include="LinkXml\BaseTypeKeptOnUninstantiatedClassWithTypePreserveAll.cs" />
+    <Compile Include="LinkXml\BaseTypeRemovedOnUninstantiatedClassWithTypePreserveNothing.cs" />
     <Compile Include="LinkXml\CanPreserveTypesUsingRegex.cs" />
     <Compile Include="LinkXml\CanPreserveAnExportedType.cs" />
     <None Include="LinkXml\Dependencies\CanPreserveAnExportedType_Forwarder.cs" />
@@ -438,6 +448,10 @@
   <ItemGroup>
     <Content Include="Attributes\OnlyKeepUsed\Dependencies\AssemblyWithUnusedAttributeOnReturnParameterDefinition.il" />
     <Content Include="Attributes\OnlyKeepUsed\UnusedAttributePreservedViaLinkXmlIsKept.xml" />
+    <Content Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesMethodsWhenNoOverrides.xml" />
+    <Content Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethod.xml" />
+    <Content Include="LinkXml\BaseTypeKeptOnUninstantiatedClassWithTypePreserveAll.xml" />
+    <Content Include="LinkXml\BaseTypeRemovedOnUninstantiatedClassWithTypePreserveNothing.xml" />
     <Content Include="LinkXml\CanPreserveTypesUsingRegex.xml" />
     <Content Include="LinkXml\CanPreserveAnExportedType.xml" />
     <Content Include="LinkXml\CanPreserveExportedTypesUsingRegex.xml" />
@@ -498,7 +512,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes.StructLayout\" />
-    <Folder Include="Inheritance.Complex" />
     <Folder Include="Reflection\Dependencies\" />
   </ItemGroup>
   <ItemGroup>
