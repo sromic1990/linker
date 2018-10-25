@@ -252,6 +252,11 @@ namespace Mono.Linker.Steps {
 			if (!Annotations.IsInstantiated (method.DeclaringType) && !Annotations.IsBaseRequired (method.DeclaringType))
 				return;
 
+			// If the type is not instantiated, but it's base type is required for some reason, we can still skip marking of the override if the base method
+			// is not abstract
+			if (!Annotations.IsInstantiated (method.DeclaringType) && Annotations.IsBaseRequired (method.DeclaringType) && !@base.IsAbstract)
+				return;
+
 			MarkMethod (method);
 			ProcessVirtualMethod (method);
 		}
