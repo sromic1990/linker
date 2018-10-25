@@ -175,13 +175,16 @@
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\AbstractBaseCanBeRemovedFromClassWithOnlyStaticMethodUsedMultiBase.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\AbstractBaseCanBeRemovedFromClassWithOnlyStaticMethodUsedWithCctor.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\ClassDerivedFromObject.cs" />
-    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesMethodsWhenNoOverrides.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesFieldsWhenNoOverrides.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethod.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\PreserveDependencyCausesOverriddenMethodToBePreserved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedAbstractMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedVirtualMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfAbstractMethodIsKept.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfVirtualMethodIsKept.cs" />
     <Compile Include="Inheritance.Complex\NoKeptCtor\ClassWithBaseAndInterfacesWithOnlyStaticMethodUsed.cs" />
+    <Compile Include="Inheritance.Complex\NoKeptCtor\LinkXmlPreservesOverriddenMethodAlsoForInterface.cs" />
+    <Compile Include="Inheritance.Complex\NoKeptCtor\LinkXmlPreservesOverriddenMethodAndInterfacesStillSwept.cs" />
     <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceWithInterfaceFromOtherAssemblyWhenExplicitMethodUsed_Lib.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassImplementingInterfaceMethodsNested.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassImplementingInterfaceMethodsNested2.cs" />
@@ -448,8 +451,10 @@
   <ItemGroup>
     <Content Include="Attributes\OnlyKeepUsed\Dependencies\AssemblyWithUnusedAttributeOnReturnParameterDefinition.il" />
     <Content Include="Attributes\OnlyKeepUsed\UnusedAttributePreservedViaLinkXmlIsKept.xml" />
-    <Content Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesMethodsWhenNoOverrides.xml" />
+    <Content Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesFieldsWhenNoOverrides.xml" />
     <Content Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethod.xml" />
+    <Content Include="Inheritance.Complex\NoKeptCtor\LinkXmlPreservesOverriddenMethodAlsoForInterface.xml" />
+    <Content Include="Inheritance.Complex\NoKeptCtor\LinkXmlPreservesOverriddenMethodAndInterfacesStillSwept.xml" />
     <Content Include="LinkXml\BaseTypeKeptOnUninstantiatedClassWithTypePreserveAll.xml" />
     <Content Include="LinkXml\BaseTypeRemovedOnUninstantiatedClassWithTypePreserveNothing.xml" />
     <Content Include="LinkXml\CanPreserveTypesUsingRegex.xml" />
