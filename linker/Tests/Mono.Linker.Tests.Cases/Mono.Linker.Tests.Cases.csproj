@@ -177,6 +177,10 @@
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\ClassDerivedFromObject.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesFieldsWhenNoOverrides.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethod.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethod2.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethodOverrideOfUsedVirtualStillRemoved.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethodOverrideOfUsedVirtualStillRemoved2.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\OverriddenToStringOnTypeWithNoMarkedCtor.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\PreserveDependencyCausesOverriddenMethodToBePreserved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedAbstractMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedVirtualMethodRemoved.cs" />
@@ -453,6 +457,9 @@
     <Content Include="Attributes\OnlyKeepUsed\UnusedAttributePreservedViaLinkXmlIsKept.xml" />
     <Content Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesFieldsWhenNoOverrides.xml" />
     <Content Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethod.xml" />
+    <Content Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethod2.xml" />
+    <Content Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethodOverrideOfUsedVirtualStillRemoved.xml" />
+    <Content Include="Inheritance.AbstractClasses\NoKeptCtor\LinkXmlPreservesOverriddenMethodOverrideOfUsedVirtualStillRemoved2.xml" />
     <Content Include="Inheritance.Complex\NoKeptCtor\LinkXmlPreservesOverriddenMethodAlsoForInterface.xml" />
     <Content Include="Inheritance.Complex\NoKeptCtor\LinkXmlPreservesOverriddenMethodAndInterfacesStillSwept.xml" />
     <Content Include="LinkXml\BaseTypeKeptOnUninstantiatedClassWithTypePreserveAll.xml" />
