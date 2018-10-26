@@ -1,4 +1,4 @@
-﻿//
+//
 // MarkStep.cs
 //
 // Author:
@@ -45,6 +45,7 @@ namespace Mono.Linker.Steps {
 		protected List<MethodDefinition> _virtual_methods;
 		protected Queue<AttributeProviderPair> _assemblyLevelAttributes;
 		protected Queue<AttributeProviderPair> _lateMarkedAttributes;
+		protected List<TypeDefinition> _typesWithInterfaces;
 
 		public AnnotationStore Annotations {
 			get { return _context.Annotations; }
@@ -62,6 +63,7 @@ namespace Mono.Linker.Steps {
 			_virtual_methods = new List<MethodDefinition> ();
 			_assemblyLevelAttributes = new Queue<AttributeProviderPair> ();
 			_lateMarkedAttributes = new Queue<AttributeProviderPair> ();
+			_typesWithInterfaces = new List<TypeDefinition> ();
 		}
 
 		public virtual void Process (LinkContext context)
@@ -168,6 +170,7 @@ namespace Mono.Linker.Steps {
 			while (!QueueIsEmpty ()) {
 				ProcessQueue ();
 				ProcessVirtualMethods ();
+				ProcessMarkedTypesWithInterfaces ();
 				DoAdditionalProcessing ();
 			}
 
@@ -208,6 +211,20 @@ namespace Mono.Linker.Steps {
 			}
 		}
 
+		void ProcessMarkedTypesWithInterfaces ()
+		{
+			// We may mark an interface type later on.  Which means we need to reprocess any time with one or more interface implementations that have not been marked
+			// and if an interface type is found to be marked and implementation is not marked, then we need to mark that implementation
+			foreach (var type in _typesWithInterfaces) {
+				// Exception, types that have not been flagged as instantiated yet.  These types may not need their interfaces even if the
+				// interface type is marked
+				if (!Annotations.IsInstantiated (type))
+					continue;
+
+				MarkInterfaceImplementations (type);
+			}
+		}
+
 		void ProcessVirtualMethod (MethodDefinition method)
 		{
 			var overrides = Annotations.GetOverrides (method);
@@ -215,10 +232,10 @@ namespace Mono.Linker.Steps {
 				return;
 
 			foreach (MethodDefinition @override in overrides)
-				ProcessOverride (@override);
+				ProcessOverride (@override, method);
 		}
 
-		void ProcessOverride (MethodDefinition method)
+		void ProcessOverride (MethodDefinition method, MethodDefinition @base)
 		{
 			if (!Annotations.IsMarked (method.DeclaringType))
 				return;
@@ -227,6 +244,15 @@ namespace Mono.Linker.Steps {
 				return;
 
 			if (Annotations.IsMarked (method))
+				return;
+
+			// We don't need to mark overrides until it is possible that the type could be instantiated
+			if (!Annotations.IsInstantiated (method.DeclaringType) && !Annotations.IsBaseRequired (method.DeclaringType))
+				return;
+
+			// If the type is not instantiated, but it's base type is required for some reason, we can still skip marking of the override if the base method
+			// is not abstract
+			if (!Annotations.IsInstantiated (method.DeclaringType) && Annotations.IsBaseRequired (method.DeclaringType) && !@base.IsAbstract)
 				return;
 
 			MarkMethod (method);
@@ -899,7 +925,6 @@ namespace Mono.Linker.Steps {
 			Tracer.Push (type);
 
 			MarkScope (type.Scope);
-			MarkType (type.BaseType);
 			MarkType (type.DeclaringType);
 			MarkCustomAttributes (type);
 			MarkSecurityDeclarations (type);
@@ -923,14 +948,22 @@ namespace Mono.Linker.Steps {
 			if (type.IsValueType || !type.IsAutoLayout)
 				MarkFields (type, type.IsEnum);
 
-			if (type.HasInterfaces) {
-				foreach (var iface in type.Interfaces) {
-					MarkInterfaceImplementation (type, iface);
-				}
+			// There are a number of markings we can defer until later when we know it's possible a reference type could be instantiated
+			// For example, if no instance of a type exist, then we don't need to mark the interfaces on that type
+			// However, for some other types there is no benefit to deferring
+			if (type.IsInterface) {
+				// There's no benefit to deferring processing of an interface type until we know a type implementing that interface is marked
+				MarkRequirementsForInstantiatedTypes (type);
+			} else if (type.IsValueType) {
+				// Note : Technically interfaces could be removed from value types in some of the same cases as reference types, however, it's harder to know when
+				// a value type instance could exist.  You'd have to track initobj and maybe locals types.  Going to punt for now.
+				MarkRequirementsForInstantiatedTypes (type);
 			}
+			
+			if (type.HasInterfaces)
+				_typesWithInterfaces.Add (type);
 
 			if (type.HasMethods) {
-				MarkMethodsIf (type.Methods, IsVirtualAndHasPreservedParent);
 				if (ShouldMarkTypeStaticConstructor (type))
 					MarkStaticConstructor (type);
 
@@ -970,6 +1003,11 @@ namespace Mono.Linker.Steps {
 
 		// Allow subclassers to mark additional things
 		protected virtual void DoAdditionalEventProcessing (EventDefinition evt)
+		{
+		}
+
+		// Allow subclassers to mark additional things
+		protected virtual void DoAdditionalInstantiatedTypeProcessing (TypeDefinition type)
 		{
 		}
 
@@ -1204,6 +1242,25 @@ namespace Mono.Linker.Steps {
 				MarkMethod (property.GetMethod);
 				MarkMethod (property.SetMethod);
 				Tracer.Pop ();
+			}
+		}
+
+		void MarkInterfaceImplementations (TypeDefinition type)
+		{
+			if (!type.HasInterfaces)
+				return;
+
+			foreach (var iface in type.Interfaces) {
+				// Only mark interface implementations of interface types that have been marked.
+				// This enables stripping of interfaces that are never used
+				var resolvedInterfaceType = iface.InterfaceType.Resolve ();
+				if (resolvedInterfaceType == null) {
+					HandleUnresolvedType (iface.InterfaceType);
+					continue;
+				}
+				
+				if (ShouldMarkInterfaceImplementation (type, iface, resolvedInterfaceType))
+					MarkInterfaceImplementation (iface);
 			}
 		}
 
@@ -1652,6 +1709,16 @@ namespace Mono.Linker.Steps {
 
 			MarkGenericParameterProvider (method);
 
+			if (ShouldMarkAsInstancePossible (method)) {
+				MarkRequirementsForInstantiatedTypes (method.DeclaringType);
+				
+				// If it's an extern ctor such as EventHandler's ctor, we won't have any IL to
+				// cause a ctor to be marked in the base type.   We know the base type needs to retain it's base,
+				// and that goes for all base types in the hierarchy 
+				if (!method.HasBody)
+					MarkAllBaseTypesAsRequired (method.DeclaringType);
+			}
+
 			if (IsPropertyMethod (method))
 				MarkProperty (GetProperty (method));
 			else if (IsEventMethod (method))
@@ -1701,11 +1768,245 @@ namespace Mono.Linker.Steps {
 		{
 		}
 
+		void MarkAllBaseTypesAsRequired (TypeDefinition type)
+		{
+			var baseTypeReference = type.BaseType;
+			while (baseTypeReference != null) {
+				var resolved = baseTypeReference.Resolve ();
+				if (resolved == null) {
+					HandleUnresolvedType (baseTypeReference);
+					return;
+				}
+
+				MarkBaseTypeAsRequired (resolved);
+				baseTypeReference = resolved.BaseType;
+			}
+		}
+
+		void MarkBaseTypeAsRequired (TypeDefinition type)
+		{
+			Annotations.MarkBaseRequired (type);
+			MarkType (type.BaseType);
+		}
+
+		protected virtual bool ShouldMarkAsInstancePossible (MethodDefinition method)
+		{
+			// We don't need to mark it multiple times
+			if (Annotations.IsInstantiated (method.DeclaringType))
+				return false;
+
+			if (method.IsConstructor && !method.IsStatic)
+				return true;
+
+			if (method.DeclaringType.IsInterface)
+				return true;
+
+			return false;
+		}
+
+		protected virtual void MarkRequirementsForInstantiatedTypes (TypeDefinition type)
+		{
+			if (Annotations.IsInstantiated (type))
+				return;
+			Annotations.MarkInstantiated (type);
+			MarkBaseTypeAsRequired (type);
+			MarkInterfaceImplementations (type);
+			MarkMethodsIf (type.Methods, IsVirtualAndHasPreservedParent);
+			DoAdditionalInstantiatedTypeProcessing (type);
+		}
+
+		void MarkBaseRequirementsFromInstruction (MethodBody callingBody)
+		{
+			var type = callingBody.Method.DeclaringType;
+
+			// We do not currently change the base type of value types
+			if (type.IsValueType)
+				return;
+
+			var bases = new List<TypeDefinition> ();
+			var current = type.BaseType;
+
+			while (current != null)
+			{
+				var resolved = current.Resolve ();
+				if (resolved == null)
+				{
+					HandleUnresolvedType (current);
+					return;
+				}
+
+				// Exclude Object.  We don't care about that
+				if (resolved.BaseType == null)
+					break;
+				
+				bases.Add (resolved);
+				current = resolved.BaseType;
+			}
+
+			// No need to do this for types derived from object.  It already has the lowest base class
+			if (bases.Count == 0)
+				return;
+
+			foreach (var instruction in callingBody.Instructions) {
+				if (instruction.Operand == null)
+					continue;
+
+				bool basesRequired = false;
+
+				if (instruction.Operand is FieldReference fieldReference)
+				{
+					basesRequired = IsTypeHierarchyRequiredFor (fieldReference, bases, type);
+				}
+				else if (instruction.Operand is MethodReference methodReference)
+				{
+					basesRequired = IsTypeHierarchyRequiredFor (methodReference, bases, type); 
+				}
+				else if (instruction.Operand is PropertyReference propertyReference)
+				{
+					//throw new NotImplementedException();
+				}
+				else if (instruction.Operand is EventReference eventReference)
+				{
+					//throw new NotImplementedException();
+				}
+				else if (instruction.Operand is TypeReference typeReference)
+				{
+					basesRequired = IsTypeHierarchyRequiredFor (typeReference, bases, type);
+				}
+
+				if (basesRequired) {
+					MarkBaseTypeAsRequired (type);
+					
+					// We could mark only the bases that are really needed.  There could be unnecessary classes in between that we don't need
+					// but that is not worth the effort at this point
+					foreach (var @base in bases)
+						MarkBaseTypeAsRequired (@base);
+
+					// We only need to do this once for now since we marked all bases.
+					return;
+				}
+			}
+		}
+
+		bool IsTypeHierarchyRequiredFor (FieldReference field,  List<TypeDefinition> basesOfBodyType, TypeDefinition bodyType)
+		{
+			var resolved = field.Resolve ();
+			if (resolved == null) {
+				HandleUnresolvedField (field);
+				return true;
+			}
+			
+			var fromBase = basesOfBodyType.FirstOrDefault (b => resolved.DeclaringType == b);
+			if (fromBase != null)
+			{
+				if (!resolved.IsStatic)
+					return true;
+
+				if (resolved.IsPublic)
+					return false;
+
+				// protected
+				if (resolved.IsFamily)
+					return true;
+
+				// It must be internal.  Trust that if the compiler allowed it we can continue to access
+				if (!resolved.IsPrivate)
+					return false;
+				
+				return false;
+			}
+			
+			if (IsTypeHierarchyRequiredForType (resolved.DeclaringType, basesOfBodyType, bodyType))
+				return true;
+
+			return false;
+		}
+
+		bool IsTypeHierarchyRequiredFor (MethodReference method,  List<TypeDefinition> basesOfBodyType, TypeDefinition bodyType)
+		{
+			var resolved = method.Resolve ();
+			if (resolved == null) {
+				HandleUnresolvedMethod (method);
+				return true;
+			}
+			
+			var fromBase = basesOfBodyType.FirstOrDefault (b => resolved.DeclaringType == b);
+			if (fromBase != null)
+			{
+				if (!resolved.IsStatic)
+					return true;
+
+				if (resolved.IsPublic)
+					return false;
+
+				// protected
+				if (resolved.IsFamily)
+					return true;
+
+				// It must be internal.  Trust that if the compiler allowed it we can continue to access
+				if (!resolved.IsPrivate)
+					return false;
+				
+				return false;
+			}
+			
+			// If the method wasn't declared on a base type of the current body, then we need to check if any of the methods types parents are base types
+			// of the body
+			if (IsTypeHierarchyRequiredForType (resolved.DeclaringType, basesOfBodyType, bodyType))
+				return true;
+
+			return false;
+		}
+
+		bool IsTypeHierarchyRequiredFor (TypeReference type, List<TypeDefinition> basesOfBodyType, TypeDefinition bodyType)
+		{
+			var resolved = type.Resolve ();
+			if (resolved == null) {
+				HandleUnresolvedType (type);
+			}
+
+			if (IsTypeHierarchyRequiredForType (resolved, basesOfBodyType, bodyType))
+				return true;
+
+			return false;
+		}
+
+		bool IsTypeHierarchyRequiredForType (TypeDefinition memberType, List<TypeDefinition> basesOfBodyType, TypeDefinition bodyType)
+		{
+			var current = memberType;
+			var parentsOfMemberType = new List<TypeDefinition> ();
+			TypeDefinition foundBase = null;
+			while (current != null) {
+				foundBase = basesOfBodyType.FirstOrDefault (b => current == b);
+				parentsOfMemberType.Add (current);
+				if (foundBase != null) {
+					break;
+				}
+
+				current = current.DeclaringType;
+			}
+
+			if (foundBase == null)
+				return false;
+
+			if (memberType.IsPublic)
+				return false;
+
+			if (memberType.IsNestedPublic) {
+				return parentsOfMemberType.Any (p => p != foundBase && !p.IsNestedPublic);
+			}
+
+			return true;
+		}
+
 		void MarkBaseMethods (MethodDefinition method)
 		{
 			var base_methods = Annotations.GetBaseMethods (method);
 			if (base_methods == null)
 				return;
+
+			// Once an override method is marked for any reason we can no longer change the base class
+			MarkBaseTypeAsRequired (method.DeclaringType);
 
 			foreach (MethodDefinition base_method in base_methods) {
 				if (base_method.DeclaringType.IsInterface && !method.DeclaringType.IsInterface)
@@ -1842,6 +2143,7 @@ namespace Mono.Linker.Steps {
 			foreach (Instruction instruction in body.Instructions)
 				MarkInstruction (instruction);
 
+			MarkBaseRequirementsFromInstruction (body);
 			MarkThingsUsedViaReflection (body);
 		}
 
@@ -1895,10 +2197,37 @@ namespace Mono.Linker.Steps {
 			}
 		}
 
-		protected virtual void MarkInterfaceImplementation (TypeDefinition type, InterfaceImplementation iface)
+		protected virtual void HandleUnresolvedField (FieldReference reference)
+		{
+			if (!_context.IgnoreUnresolved) {
+				throw new ResolutionException (reference);
+			}
+		}
+
+		protected virtual bool ShouldMarkInterfaceImplementation (TypeDefinition type, InterfaceImplementation iface, TypeDefinition resolvedInterfaceType)
+		{
+			if (Annotations.IsMarked (iface))
+				return false;
+
+			if (Annotations.IsMarked (resolvedInterfaceType) && !Annotations.IsMarked (iface))
+				return true;
+
+			// It's hard to know if a com or windows runtime interface will be needed from managed code alone,
+			// so as a precaution we will mark these interfaces once the type is instantiated
+			if (resolvedInterfaceType.IsImport || resolvedInterfaceType.IsWindowsRuntime)
+				return true;
+
+			if (!Annotations.IsPreserved (type))
+				return false;
+
+			return Annotations.GetPreserve (type) == TypePreserve.All;
+		}
+
+		protected virtual void MarkInterfaceImplementation (InterfaceImplementation iface)
 		{
 			MarkCustomAttributes (iface);
 			MarkType (iface.InterfaceType);
+			Annotations.Mark (iface);
 		}
 
 		bool CheckReflectionMethod (Instruction instruction, string reflectionMethod)
