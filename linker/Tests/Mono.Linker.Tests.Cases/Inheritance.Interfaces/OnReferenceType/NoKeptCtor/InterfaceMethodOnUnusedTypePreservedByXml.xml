@@ -1,0 +1,7 @@
+<linker>
+    <assembly fullname="test, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <type fullname="Mono.Linker.Tests.Cases.Inheritance.Interfaces.OnReferenceType.NoKeptCtor.InterfaceMethodOnUnusedTypePreservedByXml/A">
+            <method name="Bar"/>
+        </type>
+    </assembly>
+</linker>

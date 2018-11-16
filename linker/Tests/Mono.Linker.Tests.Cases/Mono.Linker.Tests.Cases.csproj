@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -188,10 +188,13 @@
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceUsedOnlyAsConstraintIsKept.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceWithInterfaceFromOtherAssemblyWhenExplicitMethodUsed.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceTypeOnlyUsedHasInterfacesRemoved.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceMethodOnUnusedComTypePreservedByXml.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedInterfaceMethodPreservedByXml.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\ComInterfaceTypeRemovedWhenOnlyUsedByClassWithOnlyStaticMethod.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsed.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsedWithCctor.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceFromCopiedAssemblyCanBeRemoved.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceMethodOnUnusedTypePreservedByXml.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceTypeRemovedWhenOnlyUsedByClassWithOnlyStaticMethod.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceTypeRemovedWhenOnlyUsedByClassWithOnlyStaticMethodMultiple.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\PreserveDependencyPreservesInterfaceMethod.cs" />
@@ -444,6 +447,9 @@
   <ItemGroup>
     <Content Include="Attributes\OnlyKeepUsed\Dependencies\AssemblyWithUnusedAttributeOnReturnParameterDefinition.il" />
     <Content Include="Attributes\OnlyKeepUsed\UnusedAttributePreservedViaLinkXmlIsKept.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceMethodOnUnusedComTypePreservedByXml.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceMethodOnUnusedTypePreservedByXml.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\UnusedInterfaceMethodPreservedByXml.xml" />
     <Content Include="LinkXml\AssemblyWithPreserveAll.xml" />
     <Content Include="LinkXml\CanPreserveTypesUsingRegex.xml" />
     <Content Include="LinkXml\CanPreserveAnExportedType.xml" />
