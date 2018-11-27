@@ -185,6 +185,9 @@
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassUsedFromConcreteTypeHasInterfaceMethodRemoved.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassUsedFromConcreteTypeHasInterfaceMethodRemoved2.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassUsedFromInterfaceHasInterfaceMethodKept.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter2.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter3.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceUsedOnlyAsConstraintIsKept.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceWithInterfaceFromOtherAssemblyWhenExplicitMethodUsed.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceTypeOnlyUsedHasInterfacesRemoved.cs" />
@@ -449,6 +452,9 @@
   <ItemGroup>
     <Content Include="Attributes\OnlyKeepUsed\Dependencies\AssemblyWithUnusedAttributeOnReturnParameterDefinition.il" />
     <Content Include="Attributes\OnlyKeepUsed\UnusedAttributePreservedViaLinkXmlIsKept.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter2.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter3.xml" />
     <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceMethodOnUnusedComTypePreservedByXml.xml" />
     <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceMethodOnUnusedTypePreservedByXml.xml" />
     <Content Include="Inheritance.Interfaces\OnReferenceType\UnusedInterfaceMethodPreservedByXml.xml" />
