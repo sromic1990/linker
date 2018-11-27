@@ -199,6 +199,9 @@
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveMethodsWithInterfacesMarked.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveNone.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceMethodOnUnusedComTypePreservedByXml.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveFields.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveMethods.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveMethodsAndInterfaceTypeMarked.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedInterfaceMethodPreservedByXml.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\ComInterfaceTypeRemovedWhenOnlyUsedByClassWithOnlyStaticMethod.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsed.cs" />
@@ -472,6 +475,9 @@
     <Content Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveNone.xml" />
     <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceMethodOnUnusedComTypePreservedByXml.xml" />
     <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceMethodOnUnusedTypePreservedByXml.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveFields.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveMethods.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveMethodsAndInterfaceTypeMarked.xml" />
     <Content Include="Inheritance.Interfaces\OnReferenceType\UnusedInterfaceMethodPreservedByXml.xml" />
     <Content Include="LinkXml\AssemblyWithPreserveAll.xml" />
     <Content Include="LinkXml\CanPreserveTypesUsingRegex.xml" />
