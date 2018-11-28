@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Mono.Linker.Tests.Cases</RootNamespace>
     <AssemblyName>Mono.Linker.Tests.Cases</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -185,21 +185,40 @@
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassUsedFromConcreteTypeHasInterfaceMethodRemoved.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassUsedFromConcreteTypeHasInterfaceMethodRemoved2.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassUsedFromInterfaceHasInterfaceMethodKept.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter2.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter3.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceUsedOnlyAsConstraintIsKept.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceWithInterfaceFromOtherAssemblyWhenExplicitMethodUsed.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceTypeOnlyUsedHasInterfacesRemoved.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndAssemblyPreserveAll.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveAll.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveFields.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveFieldsWithInterfacesMarked.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveMethods.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveMethodsWithInterfacesMarked.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveNone.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\ComInterfaceTypeRemovedWhenOnlyUsedByClassWithOnlyStaticMethod.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\ExplicitInterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsed.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsed.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsedWithCctor.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceFromCopiedAssemblyCanBeRemoved.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceTypeRemovedWhenOnlyUsedByClassWithOnlyStaticMethod.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceTypeRemovedWhenOnlyUsedByClassWithOnlyStaticMethodMultiple.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\PreserveDependencyPreservesInterfaceMethod.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveFields.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveMethods.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveMethodsAndInterfaceTypeMarked.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeHasExplicitInterfacePropertyPreservedViaXml.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeHasExplicitInterfaceMethodPreservedViaXml.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeHasInterfaceMethodPreservedViaXml.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ObjectCastedToSecondInterfaceHasMemberRemovedButInterfaceKept.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ExplicitInterfaceMethodWhichCreatesInstanceOfParentType.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\TypeGetsMarkedThatImplementsAlreadyMarkedInterfaceMethod.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedComInterfaceIsKept.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedComInterfaceIsRemovedWhenComFeatureExcluded.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedExplicitInterfaceHasMethodPreservedViaXml.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedExplicitInterfaceIsRemoved.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedInterfaceTypeIsRemoved.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\NoKeptCtor\InterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsed.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\NoKeptCtor\InterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsedWithCctor.cs" />
@@ -210,6 +229,7 @@
     <Compile Include="Inheritance.Interfaces\OnValueType\StructUsedFromConcreteTypeHasInterfaceMethodRemoved.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\StructUsedFromConcreteTypeHasInterfaceMethodRemoved2.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\StructUsedFromInterfaceHasInterfaceMethodKept.cs" />
+    <Compile Include="Inheritance.Interfaces\OnValueType\UnusedExplicitInterfaceIsRemoved.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\UnusedInterfaceTypeIsRemoved.cs" />
     <Compile Include="Inheritance.VirtualMethods\HarderToDetectUnusedVirtualMethodGetsRemoved.cs" />
     <Compile Include="Inheritance.VirtualMethods\UnusedTypeWithOverrideOfVirtualMethodIsRemoved.cs" />
@@ -222,6 +242,7 @@
     <Compile Include="Libraries\DefaultLibraryLinkBehavior.cs" />
     <Compile Include="Libraries\Dependencies\UserAssemblyActionWorks_Lib.cs" />
     <Compile Include="Libraries\UserAssemblyActionWorks.cs" />
+    <Compile Include="LinkXml\AssemblyWithPreserveAll.cs" />
     <Compile Include="LinkXml\CanPreserveTypesUsingRegex.cs" />
     <Compile Include="LinkXml\CanPreserveAnExportedType.cs" />
     <None Include="LinkXml\Dependencies\CanPreserveAnExportedType_Forwarder.cs" />
@@ -339,6 +360,7 @@
     <Compile Include="TestFramework\CanCompileTestCaseWithCsc.cs" />
     <Compile Include="TestFramework\CanCompileTestCaseWithMsc.cs" />
     <Compile Include="TestFramework\CanSandboxDependenciesUsingType.cs" />
+    <Compile Include="TestFramework\CanVerifyInterfacesOnTypesInAssembly.cs" />
     <Compile Include="TestFramework\Dependencies\CanCompileReferencesUsingTypes_LibSource1.cs" />
     <Compile Include="TestFramework\Dependencies\CanCompileReferencesUsingTypes_LibSource2.cs" />
     <Compile Include="TestFramework\Dependencies\CanCompileReferencesWithResources_Lib1.cs" />
@@ -346,6 +368,7 @@
     <Compile Include="TestFramework\Dependencies\CanCompileTestCaseWithMcs_Lib.cs" />
     <Compile Include="TestFramework\Dependencies\CanSandboxDependenciesUsingType_Source1.cs" />
     <Compile Include="TestFramework\Dependencies\CanSandboxDependenciesUsingType_Source2.cs" />
+    <Compile Include="TestFramework\Dependencies\CanVerifyInterfacesOnTypesInAssembly_Lib.cs" />
     <Compile Include="TestFramework\Dependencies\VerifyAttributesInAssemblyWorks_Base.cs" />
     <Compile Include="TestFramework\Dependencies\VerifyAttributesInAssemblyWorks_Lib.cs" />
     <Compile Include="TestFramework\VerifyAttributesInAssemblyWorks.cs" />
@@ -435,10 +458,33 @@
     <Compile Include="Statics\MixedStaticFieldInitializerAndCtor.cs" />
     <Compile Include="LinkXml\UnusedTypeDeclarationPreservedByLinkXmlIsKept.cs" />
     <Compile Include="LinkXml\CanPreserveExcludedFeatureCom.cs" />
+    <Compile Include="BCLFeatures\ETW\CustomEventSource.cs" />
+    <Compile Include="BCLFeatures\ETW\Excluded.cs" />
+    <Compile Include="BCLFeatures\ETW\BaseRemovedEventSource.cs" />
+    <Compile Include="Generics\NewConstraintOnClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Attributes\OnlyKeepUsed\Dependencies\AssemblyWithUnusedAttributeOnReturnParameterDefinition.il" />
     <Content Include="Attributes\OnlyKeepUsed\UnusedAttributePreservedViaLinkXmlIsKept.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeHasExplicitInterfaceMethodPreservedViaXml.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeHasExplicitInterfacePropertyPreservedViaXml.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeHasInterfaceMethodPreservedViaXml.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\UnusedExplicitInterfaceHasMethodPreservedViaXml.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\Dependencies\NoInstanceCtorAndAssemblyPreserveAll_Lib.il" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndAssemblyPreserveAll.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveAll.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveFields.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveFieldsWithInterfacesMarked.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveMethods.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveMethodsWithInterfacesMarked.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveNone.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter2.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter3.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveFields.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveMethods.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveMethodsAndInterfaceTypeMarked.xml" />
+    <Content Include="LinkXml\AssemblyWithPreserveAll.xml" />
     <Content Include="LinkXml\CanPreserveTypesUsingRegex.xml" />
     <Content Include="LinkXml\CanPreserveAnExportedType.xml" />
     <Content Include="LinkXml\CanPreserveExportedTypesUsingRegex.xml" />
@@ -501,6 +547,8 @@
     <Folder Include="Attributes.StructLayout\" />
     <Folder Include="Inheritance.Complex" />
     <Folder Include="Reflection\Dependencies\" />
+    <Folder Include="BCLFeatures\" />
+    <Folder Include="BCLFeatures\ETW\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="LinkXml\CanPreserveExcludedFeatureCom.xml" />
