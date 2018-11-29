@@ -75,7 +75,12 @@ namespace Mono.Linker.Tests.TestCases
 		{
 			return NUnitCasesByPrefix ("Reflection.");
 		}
-		
+
+		public static IEnumerable<TestCaseData> ReflectionActivatorTests ()
+		{
+			return NUnitCasesByPrefix ("Reflection.Activator.");
+		}
+
 		public static IEnumerable<TestCaseData> SymbolsTests ()
 		{
 			return NUnitCasesByPrefix ("Symbols.");

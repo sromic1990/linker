@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -290,6 +290,39 @@
     <Compile Include="References\Individual\Dependencies\CanSkipUnresolved_Library.cs" />
     <Compile Include="References\Dependencies\UserAssembliesAreLinkedByDefault_Library1.cs" />
     <Compile Include="References\UserAssembliesAreLinkedByDefault.cs" />
+    <Compile Include="Reflection.Activator\Dependencies\BaseTypeDefinedInDifferentAssembly_Lib1.cs" />
+    <Compile Include="Reflection.Activator\Dependencies\BaseTypeDefinedInDifferentAssembly_Lib2.cs" />
+    <Compile Include="Reflection.Activator\Dependencies\InterfaceDefinedInDifferentAssembly_Lib.cs" />
+    <Compile Include="Reflection.Activator\NoParameter\Detectable.cs" />
+    <Compile Include="Reflection.Activator\NoParameter\NotDetectable.cs" />
+    <Compile Include="Reflection.Activator\OtherOverloads\WithActivationContextDoesNothing.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\AtEndOfBody.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\BaseTypeDefinedInDifferentAssembly.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\CreateInstanceWithCtorArgumentsPreservesAllCtors.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DerivedTypesMarkedAfterCreateInstanceAreHandledCorrectly.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByAsCast.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByAsCastOptimized.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByAsCastToGenericOnMethodWithConstraint.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByAsCastToGenericOnMethodWithoutKnowableConstraint.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByAsCastToGenericOnTypeWithConstraint.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByAsCastToInterface.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByCast.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByCastOptimized.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByCreationType.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByCreationTypeAndNoDefaultCtor.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByCreationTypeWithCtorArgumentsPreservesAllCtors.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByCreationTypeWithGenericType.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByCreationTypeWithStruct.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedCreationAndCastToBase.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedCreationAndCastToBaseWithUsedDerivedType.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedCreationAndCastToSameType.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedCreationAndCastToSameTypeForStruct.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DoesNotCauseNonCtorMethodsToBeMarked.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\InterfaceDefinedInDifferentAssembly.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\MultipleUsagesInSingleBody.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\NoCreationAndNoCast.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\UnusedDerivedTypesAreNotMarked.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\UsedDerivedTypesHaveCtorMarked.cs" />
     <Compile Include="Reflection\AssemblyImportedViaReflectionWithDerivedType.cs" />
     <Compile Include="Reflection\AssemblyImportedViaReflectionWithReference.cs" />
     <Compile Include="Reflection\ConstructorUsedViaReflection.cs" />
@@ -546,6 +579,7 @@
   <ItemGroup>
     <Folder Include="Attributes.StructLayout\" />
     <Folder Include="Inheritance.Complex" />
+    <Folder Include="Reflection.Activator\StringOverload" />
     <Folder Include="Reflection\Dependencies\" />
     <Folder Include="BCLFeatures\" />
     <Folder Include="BCLFeatures\ETW\" />
