@@ -46,6 +46,7 @@ namespace Mono.Linker.Steps {
 		protected Queue<AttributeProviderPair> _assemblyLevelAttributes;
 		protected Queue<AttributeProviderPair> _lateMarkedAttributes;
 		protected List<TypeDefinition> _typesWithInterfaces;
+		protected List<ActivatorCreateInstanceMarkingInformation> _activatorCreateInstanceTypes;
 
 		public AnnotationStore Annotations {
 			get { return _context.Annotations; }
@@ -64,6 +65,7 @@ namespace Mono.Linker.Steps {
 			_assemblyLevelAttributes = new Queue<AttributeProviderPair> ();
 			_lateMarkedAttributes = new Queue<AttributeProviderPair> ();
 			_typesWithInterfaces = new List<TypeDefinition> ();
+			_activatorCreateInstanceTypes = new List<ActivatorCreateInstanceMarkingInformation> ();
 		}
 
 		public virtual void Process (LinkContext context)
@@ -175,6 +177,7 @@ namespace Mono.Linker.Steps {
 
 			while (!QueueIsEmpty ()) {
 				ProcessQueue ();
+				ProcessActivatorCreateInstanceType ();
 				ProcessVirtualMethods ();
 				ProcessMarkedTypesWithInterfaces ();
 				DoAdditionalProcessing ();
@@ -214,6 +217,23 @@ namespace Mono.Linker.Steps {
 				Tracer.Push (method);
 				ProcessVirtualMethod (method);
 				Tracer.Pop ();
+			}
+		}
+
+		void ProcessActivatorCreateInstanceType()
+		{
+			foreach (var information in _activatorCreateInstanceTypes) {
+				foreach (var markedType in Annotations.GetMarkedTypes ()) {
+					if (markedType.DerivesFrom (information.CastType)) {
+						foreach (var ctor in ConstructorsToMarkForActivatorCreateInstanceUsage (markedType, information.DefaultCtorOnly)) {
+							// Need to avoid queuing things that are already marked otherwise we'll never finish marking
+							if (Annotations.IsProcessed (ctor))
+								continue;
+
+							MarkMethod (ctor);
+						}
+					}
+				}
 			}
 		}
 
@@ -1966,6 +1986,7 @@ namespace Mono.Linker.Steps {
 			MarkSomethingUsedViaReflection ("GetField", MarkFieldUsedViaReflection, body.Instructions);
 			MarkSomethingUsedViaReflection ("GetEvent", MarkEventUsedViaReflection, body.Instructions);
 			MarkTypeUsedViaReflection (body.Instructions);
+			MarkActivatorCreateInstance (body);
 		}
 
 		protected virtual void MarkInstruction (Instruction instruction)
@@ -2047,6 +2068,100 @@ namespace Mono.Linker.Steps {
 				return false;
 
 			return true;
+		}
+
+		void MarkActivatorCreateInstance (MethodBody body)
+		{
+			var instructions = body.Instructions;
+			for (var i = 0; i < instructions.Count; i++) {
+				var instruction = instructions [i];
+				
+				if (instruction.OpCode != OpCodes.Call && instruction.OpCode != OpCodes.Callvirt)
+					continue;
+				
+				var methodBeingCalled = instruction.Operand as MethodReference;
+				if (methodBeingCalled == null || methodBeingCalled.DeclaringType.Name != "Activator" || methodBeingCalled.DeclaringType.Namespace != "System")
+					continue;
+
+				if (methodBeingCalled.Name == "CreateInstance") {
+					// If the single param method is being used, then we can infer that only the default ctor is needed.  If any of the  variations are used,
+					// let's assume ctor argument could be in use and mark all ctors
+					var defaultCtorOnly = methodBeingCalled.Parameters.Count == 1;
+
+					// TODO by Mike : Make more robust?
+					// TODO by Mike : Make extensible so that we could use our stack evaluator to do a better job?
+					if (i - 2 >= 0 &&  instructions [i - 2].OpCode.Code == Code.Ldtoken)
+					{
+						var instanceBeingCreated = instructions[i - 2].Operand as TypeReference;
+						if (instanceBeingCreated == null)
+							continue;
+
+						var resolvedType = instanceBeingCreated.Resolve();
+						if (resolvedType == null)
+							continue;
+
+						foreach (var ctor in ConstructorsToMarkForActivatorCreateInstanceUsage (resolvedType, defaultCtorOnly))
+							MarkMethod (ctor);
+						
+						continue;
+					}
+					
+					if (i + 1 > instructions.Count)
+						continue;
+
+					var nextInstruction = instructions[i + 1];
+					if (nextInstruction.OpCode.Code == Code.Isinst || nextInstruction.OpCode.Code == Code.Castclass /*&& instructions[i + 2].OpCode.Code == Code.Unbox_Any*/) {
+						var instanceBeingCastedToType = nextInstruction.Operand as TypeReference;
+						if (instanceBeingCastedToType == null)
+							continue;
+
+						var typeToMark = FigureOutCreateInstanceCastType (instanceBeingCastedToType, body);
+						if (typeToMark == null)
+							continue;
+
+						var resolvedTypeToMark = typeToMark.Resolve ();
+						if (resolvedTypeToMark == null)
+							continue;
+
+
+						// TODO by Mike : Avoid adding duplicates for the same type.
+						
+						_activatorCreateInstanceTypes.Add (new ActivatorCreateInstanceMarkingInformation (resolvedTypeToMark, defaultCtorOnly));
+					}
+					
+				}
+				else if (methodBeingCalled.Name == "CreateInstanceFrom")
+				{
+					// TODO : Could support this as well
+					continue;
+				}
+			}
+		}
+
+		IEnumerable<MethodDefinition> ConstructorsToMarkForActivatorCreateInstanceUsage (TypeDefinition type, bool defaultCtorOnly)
+		{
+			if (defaultCtorOnly)
+				return type.Methods.Where (MethodDefinitionExtensions.IsDefaultConstructor);
+
+			return type.Methods.Where (m => m.IsConstructor);
+		}
+
+		TypeReference FigureOutCreateInstanceCastType (TypeReference activationCastType, MethodBody callingBody)
+		{
+			if (!activationCastType.IsGenericInstance && !activationCastType.IsGenericParameter)
+				return activationCastType;
+
+//			var tmp = TypeReferenceExtensions.InflateGenericType((GenericInstanceType)activationCastType, activationCastType);
+
+			if (activationCastType is GenericParameter genericParameter) {
+				if (!genericParameter.HasConstraints)
+					return null;
+
+				return genericParameter.Constraints [0];
+			}
+
+//			return TypeResolver.For(callingBody.Method.DeclaringType, callingBody.Method).Resolve(activationCastType);
+			return null;
 		}
 
 		void MarkSomethingUsedViaReflection (string reflectionMethod, Action<Collection<Instruction>, string, TypeDefinition, BindingFlags> markMethod, Collection<Instruction> instructions)
@@ -2226,6 +2341,17 @@ namespace Mono.Linker.Steps {
 
 			public CustomAttribute Attribute { get; private set; }
 			public ICustomAttributeProvider Provider { get; private set; }
+		}
+		
+		protected class ActivatorCreateInstanceMarkingInformation {
+			public ActivatorCreateInstanceMarkingInformation (TypeDefinition castType, bool defaultCtorOnly)
+			{
+				CastType = castType;
+				DefaultCtorOnly = defaultCtorOnly;
+			}
+			
+			public TypeDefinition CastType { get; set; }
+			public bool DefaultCtorOnly { get; set; }
 		}
 	}
 
