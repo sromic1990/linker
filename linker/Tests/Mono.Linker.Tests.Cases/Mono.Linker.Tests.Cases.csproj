@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -290,6 +290,33 @@
     <Compile Include="References\Individual\Dependencies\CanSkipUnresolved_Library.cs" />
     <Compile Include="References\Dependencies\UserAssembliesAreLinkedByDefault_Library1.cs" />
     <Compile Include="References\UserAssembliesAreLinkedByDefault.cs" />
+    <Compile Include="Reflection.Activator\AtEndOfBody.cs" />
+    <Compile Include="Reflection.Activator\BaseTypeDefinedInDifferentAssembly.cs" />
+    <Compile Include="Reflection.Activator\CreateInstanceWithCtorArgumentsPreservesAllCtors.cs" />
+    <Compile Include="Reflection.Activator\Dependencies\BaseTypeDefinedInDifferentAssembly_Lib1.cs" />
+    <Compile Include="Reflection.Activator\Dependencies\BaseTypeDefinedInDifferentAssembly_Lib2.cs" />
+    <Compile Include="Reflection.Activator\Dependencies\InterfaceDefinedInDifferentAssembly_Lib.cs" />
+    <Compile Include="Reflection.Activator\DerivedTypesMarkedAfterCreateInstanceAreHandledCorrectly.cs" />
+    <Compile Include="Reflection.Activator\DetectedByAsCast.cs" />
+    <Compile Include="Reflection.Activator\DetectedByAsCastOptimized.cs" />
+    <Compile Include="Reflection.Activator\DetectedByAsCastToGenericOnMethodWithConstraint.cs" />
+    <Compile Include="Reflection.Activator\DetectedByAsCastToGenericOnMethodWithoutKnowableConstraint.cs" />
+    <Compile Include="Reflection.Activator\DetectedByAsCastToGenericOnTypeWithConstraint.cs" />
+    <Compile Include="Reflection.Activator\DetectedByAsCastToInterface.cs" />
+    <Compile Include="Reflection.Activator\DetectedByCast.cs" />
+    <Compile Include="Reflection.Activator\DetectedByCastOptimized.cs" />
+    <Compile Include="Reflection.Activator\DetectedByCreationType.cs" />
+    <Compile Include="Reflection.Activator\DetectedByCreationTypeWithGenericType.cs" />
+    <Compile Include="Reflection.Activator\DetectedByCreationTypeWithStruct.cs" />
+    <Compile Include="Reflection.Activator\DetectedCreationAndCastToBase.cs" />
+    <Compile Include="Reflection.Activator\DetectedCreationAndCastToBaseWithUsedDerivedType.cs" />
+    <Compile Include="Reflection.Activator\DetectedCreationAndCastToSameType.cs" />
+    <Compile Include="Reflection.Activator\DetectedCreationAndCastToSameTypeForStruct.cs" />
+    <Compile Include="Reflection.Activator\DoesNotCauseNonCtorMethodsToBeMarked.cs" />
+    <Compile Include="Reflection.Activator\InterfaceDefinedInDifferentAssembly.cs" />
+    <Compile Include="Reflection.Activator\NoCreationAndNoCast.cs" />
+    <Compile Include="Reflection.Activator\UnusedDerivedTypesAreNotMarked.cs" />
+    <Compile Include="Reflection.Activator\UsedDerivedTypesHaveCtorMarked.cs" />
     <Compile Include="Reflection\AssemblyImportedViaReflectionWithDerivedType.cs" />
     <Compile Include="Reflection\AssemblyImportedViaReflectionWithReference.cs" />
     <Compile Include="Reflection\ConstructorUsedViaReflection.cs" />
