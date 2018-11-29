@@ -293,6 +293,8 @@
     <Compile Include="Reflection.Activator\Dependencies\BaseTypeDefinedInDifferentAssembly_Lib1.cs" />
     <Compile Include="Reflection.Activator\Dependencies\BaseTypeDefinedInDifferentAssembly_Lib2.cs" />
     <Compile Include="Reflection.Activator\Dependencies\InterfaceDefinedInDifferentAssembly_Lib.cs" />
+    <Compile Include="Reflection.Activator\NoParameter\Detectable.cs" />
+    <Compile Include="Reflection.Activator\NoParameter\NotDetectable.cs" />
     <Compile Include="Reflection.Activator\OtherOverloads\WithActivationContextDoesNothing.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\AtEndOfBody.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\BaseTypeDefinedInDifferentAssembly.cs" />
@@ -307,6 +309,8 @@
     <Compile Include="Reflection.Activator\TypeOverload\DetectedByCast.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\DetectedByCastOptimized.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\DetectedByCreationType.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByCreationTypeAndNoDefaultCtor.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\DetectedByCreationTypeWithCtorArgumentsPreservesAllCtors.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\DetectedByCreationTypeWithGenericType.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\DetectedByCreationTypeWithStruct.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\DetectedCreationAndCastToBase.cs" />
@@ -315,6 +319,7 @@
     <Compile Include="Reflection.Activator\TypeOverload\DetectedCreationAndCastToSameTypeForStruct.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\DoesNotCauseNonCtorMethodsToBeMarked.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\InterfaceDefinedInDifferentAssembly.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\MultipleUsagesInSingleBody.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\NoCreationAndNoCast.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\UnusedDerivedTypesAreNotMarked.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\UsedDerivedTypesHaveCtorMarked.cs" />

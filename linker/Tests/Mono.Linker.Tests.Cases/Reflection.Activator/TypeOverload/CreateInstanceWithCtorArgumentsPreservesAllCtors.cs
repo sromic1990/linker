@@ -6,7 +6,7 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
 		public static void Main ()
 		{
 			HereToMarkBarTypeOnly (null);
-			var tmp = System.Activator.CreateInstance (UndetectableWayOfGettingType (), new object[] {}) as Base;
+			var tmp = System.Activator.CreateInstance (UndetectableWayOfGettingType (), new object[0]) as Base;
 			HereToUseCreatedInstance (tmp);
 		}
 
