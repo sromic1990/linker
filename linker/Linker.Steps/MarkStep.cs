@@ -225,7 +225,7 @@ namespace Mono.Linker.Steps {
 			foreach (var information in _activatorCreateInstanceTypes) {
 				foreach (var markedType in Annotations.GetMarkedTypes ()) {
 					if (markedType.DerivesFrom (information.CastType)) {
-						foreach (var ctor in ConstructorsToMarkForActivatorCreateInstanceUsage (markedType, information.DefaultCtorOnly)) {
+						foreach (var ctor in ConstructorsToMarkForActivatorCreateInstanceUsage (markedType, information.MarkingRules)) {
 							// Need to avoid queuing things that are already marked otherwise we'll never finish marking
 							if (Annotations.IsProcessed (ctor))
 								continue;
@@ -2084,51 +2084,24 @@ namespace Mono.Linker.Steps {
 					continue;
 
 				if (methodBeingCalled.Name == "CreateInstance") {
-					// If the single param method is being used, then we can infer that only the default ctor is needed.  If any of the  variations are used,
-					// let's assume ctor argument could be in use and mark all ctors
-					var defaultCtorOnly = methodBeingCalled.Parameters.Count == 1;
+					var markingRules = GetCreateInstanceMarkRules (methodBeingCalled);
+					if (markingRules == CreateInstanceMarkRules.NotSupported)
+						continue;
 
-					// TODO by Mike : Make more robust?
-					// TODO by Mike : Make extensible so that we could use our stack evaluator to do a better job?
-					if (i - 2 >= 0 &&  instructions [i - 2].OpCode.Code == Code.Ldtoken)
-					{
-						var instanceBeingCreated = instructions[i - 2].Operand as TypeReference;
-						if (instanceBeingCreated == null)
-							continue;
-
-						var resolvedType = instanceBeingCreated.Resolve();
-						if (resolvedType == null)
-							continue;
-
-						foreach (var ctor in ConstructorsToMarkForActivatorCreateInstanceUsage (resolvedType, defaultCtorOnly))
+					if (TryProcessCreationTypeOfCreateInstanceCall (methodBeingCalled, instruction, markingRules, out MethodDefinition [] ctorsToMark)) {
+						foreach (var ctor in ctorsToMark)
 							MarkMethod (ctor);
 						
+						// If we managed to figure out the actual type being created then our work is done
 						continue;
 					}
-					
-					if (i + 1 > instructions.Count)
-						continue;
 
-					var nextInstruction = instructions[i + 1];
-					if (nextInstruction.OpCode.Code == Code.Isinst || nextInstruction.OpCode.Code == Code.Castclass /*&& instructions[i + 2].OpCode.Code == Code.Unbox_Any*/) {
-						var instanceBeingCastedToType = nextInstruction.Operand as TypeReference;
-						if (instanceBeingCastedToType == null)
-							continue;
-
-						var typeToMark = FigureOutCreateInstanceCastType (instanceBeingCastedToType, body);
-						if (typeToMark == null)
-							continue;
-
-						var resolvedTypeToMark = typeToMark.Resolve ();
-						if (resolvedTypeToMark == null)
-							continue;
-
-
+					// if we couldn't figure out the creation type, maybe we can figure out the cast type and infer some precautionary preservations from there
+					if (TryProcessCastTypeOfCreateInstanceCall (methodBeingCalled, instruction, markingRules, out ActivatorCreateInstanceMarkingInformation information)) {
 						// TODO by Mike : Avoid adding duplicates for the same type.
-						
-						_activatorCreateInstanceTypes.Add (new ActivatorCreateInstanceMarkingInformation (resolvedTypeToMark, defaultCtorOnly));
+						_activatorCreateInstanceTypes.Add(information);
+						continue;
 					}
-					
 				}
 				else if (methodBeingCalled.Name == "CreateInstanceFrom")
 				{
@@ -2138,15 +2111,161 @@ namespace Mono.Linker.Steps {
 			}
 		}
 
-		IEnumerable<MethodDefinition> ConstructorsToMarkForActivatorCreateInstanceUsage (TypeDefinition type, bool defaultCtorOnly)
+		protected enum CreateInstanceMarkRules {
+			NotSupported,
+			DefaultCtorOnly,
+			All,
+		}
+
+		CreateInstanceMarkRules GetCreateInstanceMarkRules (MethodReference createInstanceMethod)
 		{
-			if (defaultCtorOnly)
+			// CreateInstance<T>()
+			if (!createInstanceMethod.HasParameters)
+				return CreateInstanceMarkRules.DefaultCtorOnly;
+
+			var parameters = createInstanceMethod.Parameters;
+
+			var parameter1 = parameters [0];
+			if (parameter1.ParameterType.Name == "ActivationContext" || parameter1.ParameterType.Name == "AppDomain")
+				return CreateInstanceMarkRules.NotSupported;
+
+			if (BCL.SystemTypes.IsType (parameter1.ParameterType)) {
+				if (parameters.Count == 1)
+					return CreateInstanceMarkRules.DefaultCtorOnly;
+				
+				// CreateInstance(Type, Boolean)
+				if (parameters.Count == 2 && BCL.SystemTypes.IsBool (parameters [1].ParameterType))
+					return CreateInstanceMarkRules.DefaultCtorOnly;
+
+				// All other overloads starting with Type have a ctor args param so we have to mark everything for those
+				return CreateInstanceMarkRules.All;
+			}
+			
+			if (parameters.Count >= 2 && BCL.SystemTypes.IsString (parameter1.ParameterType) && BCL.SystemTypes.IsString (parameters [1].ParameterType)) {
+				// CreateInstance(String, String)
+				if (parameters.Count == 2)
+					return CreateInstanceMarkRules.DefaultCtorOnly;
+
+				return CreateInstanceMarkRules.All;
+			}
+
+			return CreateInstanceMarkRules.NotSupported;
+		}
+
+		bool TryProcessCreationTypeOfCreateInstanceCall (MethodReference createInstanceMethod, Instruction callInstruction,
+			CreateInstanceMarkRules markingRules, out MethodDefinition [] ctorsToMark)
+		{
+			ctorsToMark = null;
+			// CreateInstance<T>()
+			if (!createInstanceMethod.HasParameters) {
+				if (createInstanceMethod is GenericInstanceMethod genericInstanceMethod) {
+					var resolved = genericInstanceMethod.GenericArguments [0].Resolve ();
+					if (resolved == null)
+						return false;
+					
+					ctorsToMark = ConstructorsToMarkForActivatorCreateInstanceUsage (resolved, markingRules).ToArray ();
+					return ctorsToMark.Length > 0;
+				}
+			}
+
+			var parameter1 = createInstanceMethod.Parameters [0];
+			if (parameter1 == null)
+				return false;
+
+			// This if should handle all overloads starting with System.Type
+			if (BCL.SystemTypes.IsType (parameter1.ParameterType)) {
+				ctorsToMark = EvaluateCreationTypeCreateInstanceWithType (createInstanceMethod, callInstruction, markingRules);
+				return ctorsToMark != null;
+			}
+
+			if (createInstanceMethod.Parameters.Count == 1)
+				return false;
+
+			var parameter2 = createInstanceMethod.Parameters [1];
+			// This if should handle all overloads starting with System.String, System.String
+			if (BCL.SystemTypes.IsString (parameter1.ParameterType) && BCL.SystemTypes.IsString (parameter2.ParameterType)) {
+				ctorsToMark = EvaluateCreationTypeCreateInstanceWithStringString (createInstanceMethod, callInstruction, markingRules);
+				return ctorsToMark != null;
+			}
+
+			// It's some overload we can't handle
+			return false;
+		}
+
+		protected virtual MethodDefinition [] EvaluateCreationTypeCreateInstanceWithType (MethodReference createInstanceMethod, Instruction callInstruction, CreateInstanceMarkRules markingRules)
+		{
+			//
+			// Expected pattern is
+			// IL_0000: ldtoken Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.DetectedByCreationType/Foo
+			// IL_0005: call class [mscorlib]System.Type [mscorlib]System.Type::GetTypeFromHandle(valuetype [mscorlib]System.RuntimeTypeHandle)
+			// IL_000a: call object [mscorlib]System.Activator::CreateInstance(class [mscorlib]System.Type)
+			//
+			var previousInstruction = callInstruction.Previous;
+			if (previousInstruction == null)
+				return null;
+			var previousPreviousInstruction = previousInstruction.Previous;
+			if (previousPreviousInstruction == null)
+				return null;
+
+			if (previousInstruction.OpCode.Code != Code.Call || previousPreviousInstruction.OpCode.Code != Code.Ldtoken)
+				return null;
+
+			var createdType = (previousPreviousInstruction.Operand as TypeReference)?.Resolve ();
+			if (createdType == null)
+				return null;
+
+			return ConstructorsToMarkForActivatorCreateInstanceUsage (createdType, markingRules).ToArray ();
+		}
+
+		protected virtual MethodDefinition [] EvaluateCreationTypeCreateInstanceWithStringString (MethodReference createInstanceMethod, Instruction callInstruction, CreateInstanceMarkRules markingRules)
+		{
+			throw new NotImplementedException("TODO by Mike");
+		}
+
+		bool TryProcessCastTypeOfCreateInstanceCall (MethodReference createInstanceMethod, Instruction callInstruction,
+			CreateInstanceMarkRules markingRules, out ActivatorCreateInstanceMarkingInformation information)
+		{
+			information = null;
+			// this method should never be called during the `CreateInstance<T>()` case
+			if (!createInstanceMethod.HasParameters)
+				return false;
+
+			var nextInstruction = callInstruction.Next;
+			if (nextInstruction == null)
+				return false;
+			
+			if (nextInstruction.OpCode.Code == Code.Isinst || nextInstruction.OpCode.Code == Code.Castclass) {
+				var instanceBeingCastedToType = nextInstruction.Operand as TypeReference;
+				if (instanceBeingCastedToType == null)
+					return false;
+
+				var typeToMark = EvaluateCastType (instanceBeingCastedToType);
+				if (typeToMark == null)
+					return false;
+
+				var resolvedTypeToMark = typeToMark.Resolve ();
+				if (resolvedTypeToMark == null)
+					return false;
+				
+				information = new ActivatorCreateInstanceMarkingInformation(resolvedTypeToMark, markingRules);
+				return true;
+			}
+
+			return false;
+		}
+
+		IEnumerable<MethodDefinition> ConstructorsToMarkForActivatorCreateInstanceUsage (TypeDefinition type, CreateInstanceMarkRules rules)
+		{
+			if (rules == CreateInstanceMarkRules.NotSupported)
+				throw new ArgumentException (nameof (rules));
+			
+			if (rules == CreateInstanceMarkRules.DefaultCtorOnly)
 				return type.Methods.Where (MethodDefinitionExtensions.IsDefaultConstructor);
 
 			return type.Methods.Where (m => m.IsConstructor);
 		}
 
-		TypeReference FigureOutCreateInstanceCastType (TypeReference activationCastType, MethodBody callingBody)
+		TypeReference EvaluateCastType (TypeReference activationCastType)
 		{
 			if (!activationCastType.IsGenericInstance && !activationCastType.IsGenericParameter)
 				return activationCastType;
@@ -2344,14 +2463,14 @@ namespace Mono.Linker.Steps {
 		}
 		
 		protected class ActivatorCreateInstanceMarkingInformation {
-			public ActivatorCreateInstanceMarkingInformation (TypeDefinition castType, bool defaultCtorOnly)
+			public ActivatorCreateInstanceMarkingInformation (TypeDefinition castType, CreateInstanceMarkRules markingRules)
 			{
 				CastType = castType;
-				DefaultCtorOnly = defaultCtorOnly;
+				MarkingRules = markingRules;
 			}
 			
 			public TypeDefinition CastType { get; set; }
-			public bool DefaultCtorOnly { get; set; }
+			public CreateInstanceMarkRules MarkingRules { get; set; }
 		}
 	}
 
