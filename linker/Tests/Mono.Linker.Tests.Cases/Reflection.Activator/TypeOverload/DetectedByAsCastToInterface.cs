@@ -1,14 +1,15 @@
 using System;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator {
-	public class UnusedDerivedTypesAreNotMarked {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
+	[IgnoreTestCase("TODO by Mike: Not supported yet")]
+	public class DetectedByAsCastToInterface {
 		public static void Main ()
 		{
-			var tmp = System.Activator.CreateInstance (UndetectableWayOfGettingType ()) as Base;
+			var tmp = System.Activator.CreateInstance (UndetectableWayOfGettingType ()) as IFoo;
 			HereToUseCreatedInstance (tmp);
 		}
-
+		
 		[Kept]
 		static void HereToUseCreatedInstance (object arg)
 		{
@@ -20,19 +21,13 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator {
 			return typeof (Foo);
 		}
 
-		[Kept]
-		[KeptMember (".ctor()")]
-		abstract class Base
+		interface IFoo
 		{
 		}
 
 		[Kept]
 		[KeptMember (".ctor()")]
-		[KeptBaseType (typeof (Base))]
-		class Foo : Base {
-		}
-
-		class Bar : Base {
+		class Foo : IFoo {
 		}
 	}
 }

@@ -2,7 +2,7 @@ using System;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 using Mono.Linker.Tests.Cases.Expectations.Metadata;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
 	// Goal if this test is to ensure no issues with looking past the call instruction so use optimize+ to avoid any potential extra instructions
 	[SetupCompileArgument("/optimize+")]
 	public class AtEndOfBody {

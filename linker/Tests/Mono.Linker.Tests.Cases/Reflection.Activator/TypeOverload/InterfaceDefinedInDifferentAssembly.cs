@@ -3,8 +3,8 @@ using Mono.Linker.Tests.Cases.Expectations.Assertions;
 using Mono.Linker.Tests.Cases.Expectations.Metadata;
 using Mono.Linker.Tests.Cases.Reflection.Activator.Dependencies;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator {
-	[SetupCompileBefore ("base1.dll", new [] {"Dependencies/InterfaceDefinedInDifferentAssembly_Lib.cs"})]
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
+	[SetupCompileBefore ("base1.dll", new [] {"../Dependencies/InterfaceDefinedInDifferentAssembly_Lib.cs"})]
 	public class InterfaceDefinedInDifferentAssembly {
 		public static void Main ()
 		{

@@ -2,7 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
 	public class DerivedTypesMarkedAfterCreateInstanceAreHandledCorrectly {
 		public static void Main ()
 		{
@@ -29,7 +29,7 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator {
 		}
 
 		[Kept]
-		[PreserveDependency ("Helper()", "Mono.Linker.Tests.Cases.Reflection.Activator.DerivedTypesMarkedAfterCreateInstanceAreHandledCorrectly+Jar")]
+		[PreserveDependency ("Helper()", "Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.DerivedTypesMarkedAfterCreateInstanceAreHandledCorrectly+Jar")]
 		static void MethodThatTriggersPreserveDependency ()
 		{
 		}

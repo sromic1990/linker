@@ -1,12 +1,14 @@
 using System;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator {
-	[IgnoreTestCase("TODO by Mike: Not supported yet")]
-	public class DetectedByAsCastToInterface {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
+	/// <summary>
+	/// Nothing we can do in this case
+	/// </summary>
+	public class NoCreationAndNoCast {
 		public static void Main ()
 		{
-			var tmp = System.Activator.CreateInstance (UndetectableWayOfGettingType ()) as IFoo;
+			var tmp = System.Activator.CreateInstance (UndetectableWayOfGettingType ());
 			HereToUseCreatedInstance (tmp);
 		}
 		
@@ -21,13 +23,8 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator {
 			return typeof (Foo);
 		}
 
-		interface IFoo
-		{
-		}
-
 		[Kept]
-		[KeptMember (".ctor()")]
-		class Foo : IFoo {
+		class Foo {
 		}
 	}
 }

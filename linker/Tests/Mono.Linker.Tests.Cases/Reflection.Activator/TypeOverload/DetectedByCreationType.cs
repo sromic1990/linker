@@ -1,10 +1,10 @@
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator {
-	public class DetectedByCreationTypeWithGenericType {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
+	public class DetectedByCreationType {
 		public static void Main ()
 		{
-			var tmp = System.Activator.CreateInstance (typeof (Foo<>));
+			var tmp = System.Activator.CreateInstance (typeof (Foo));
 			HereToUseCreatedInstance (tmp);
 		}
 
@@ -15,7 +15,7 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator {
 
 		[Kept]
 		[KeptMember(".ctor()")]
-		class Foo<T> {
+		class Foo {
 		}
 	}
 }

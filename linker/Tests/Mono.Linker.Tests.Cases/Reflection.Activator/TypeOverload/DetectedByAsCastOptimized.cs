@@ -1,8 +1,10 @@
 using System;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
+using Mono.Linker.Tests.Cases.Expectations.Metadata;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator {
-	public class DetectedByAsCast {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
+	[SetupCompileArgument ("/optimize+")]
+	public class DetectedByAsCastOptimized {
 		public static void Main ()
 		{
 			var tmp = System.Activator.CreateInstance (UndetectableWayOfGettingType ()) as Foo;
@@ -21,7 +23,7 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator {
 		}
 
 		[Kept]
-		[KeptMember (".ctor()")]
+		[KeptMember(".ctor()")]
 		class Foo {
 		}
 	}

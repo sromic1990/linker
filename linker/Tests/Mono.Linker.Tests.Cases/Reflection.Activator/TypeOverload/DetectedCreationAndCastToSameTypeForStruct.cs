@@ -1,11 +1,10 @@
-using System;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator {
-	public class DetectedCreationAndCastToSameType {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
+	public class DetectedCreationAndCastToSameTypeForStruct {
 		public static void Main ()
 		{
-			var tmp = System.Activator.CreateInstance (typeof (Foo)) as Foo;
+			var tmp = (Foo) System.Activator.CreateInstance (typeof (Foo));
 			HereToUseCreatedInstance (tmp);
 		}
 		
@@ -16,7 +15,7 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator {
 
 		[Kept]
 		[KeptMember (".ctor()")]
-		class Foo {
+		struct Foo {
 		}
 	}
 }
