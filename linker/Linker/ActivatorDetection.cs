@@ -4,7 +4,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace Mono.Linker {
-	public static class ActivatorUtils {
+	public static class ActivatorDetection {
 		public enum CreateInstanceOverloadVariation {
 			Unknown,
 			Generic,

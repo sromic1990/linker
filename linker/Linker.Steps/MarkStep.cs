@@ -2085,7 +2085,7 @@ namespace Mono.Linker.Steps {
 				if (methodBeingCalled == null)
 					continue;
 				
-				if (!ActivatorUtils.TryParseUsage (methodBeingCalled, out ActivatorUtils.CreateInstanceOverloadVariation variation, out ActivatorUtils.CreateInstanceCtorUsage usage))
+				if (!ActivatorDetection.TryParseUsage (methodBeingCalled, out ActivatorDetection.CreateInstanceOverloadVariation variation, out ActivatorDetection.CreateInstanceCtorUsage usage))
 					continue;
 
 				if (TryProcessCreationTypeOfCreateInstanceCall (body, methodBeingCalled, instruction, variation, usage)) {
@@ -2103,7 +2103,7 @@ namespace Mono.Linker.Steps {
 			}
 		}
 
-		protected virtual void UndetectableActivatorCreateInstanceUsage (MethodBody body, MethodReference createInstanceMethod, Instruction callInstruction, ActivatorUtils.CreateInstanceOverloadVariation variation, ActivatorUtils.CreateInstanceCtorUsage ctorUsage)
+		protected virtual void UndetectableActivatorCreateInstanceUsage (MethodBody body, MethodReference createInstanceMethod, Instruction callInstruction, ActivatorDetection.CreateInstanceOverloadVariation variation, ActivatorDetection.CreateInstanceCtorUsage ctorUsage)
 		{
 			// At some point it would be nice to record undetectable reflection usage so that we can report it somehow.
 		}
@@ -2121,10 +2121,10 @@ namespace Mono.Linker.Steps {
 		/// <param name="ctorUsage"></param>
 		/// <returns></returns>
 		protected virtual bool TryProcessCreationTypeOfCreateInstanceCall (MethodBody body, MethodReference createInstanceMethod, Instruction callInstruction,
-			ActivatorUtils.CreateInstanceOverloadVariation variation, ActivatorUtils.CreateInstanceCtorUsage ctorUsage)
+			ActivatorDetection.CreateInstanceOverloadVariation variation, ActivatorDetection.CreateInstanceCtorUsage ctorUsage)
 		{
 			switch (variation) {
-			case ActivatorUtils.CreateInstanceOverloadVariation.Generic:
+			case ActivatorDetection.CreateInstanceOverloadVariation.Generic:
 				if (createInstanceMethod is GenericInstanceMethod genericInstanceMethod) {
 					var resolved = genericInstanceMethod.GenericArguments [0].Resolve ();
 					if (resolved == null)
@@ -2136,19 +2136,19 @@ namespace Mono.Linker.Steps {
 
 				return false;
 			
-			case ActivatorUtils.CreateInstanceOverloadVariation.Type:
-			case ActivatorUtils.CreateInstanceOverloadVariation.TypeBool:
+			case ActivatorDetection.CreateInstanceOverloadVariation.Type:
+			case ActivatorDetection.CreateInstanceOverloadVariation.TypeBool:
 			{
-				var creationType = ActivatorUtils.EvaluateCreationForTypeVariation (callInstruction, variation, ctorUsage);
+				var creationType = ActivatorDetection.EvaluateCreationForTypeVariation (callInstruction, variation, ctorUsage);
 				if (creationType == null)
 					return false;
 				
 				MarkConstructorsToForActivatorCreateInstanceUsage (creationType, ctorUsage);
 				return true;
 			}
-			case ActivatorUtils.CreateInstanceOverloadVariation.StringString:
+			case ActivatorDetection.CreateInstanceOverloadVariation.StringString:
 			{
-				var creationType = ActivatorUtils.EvaluateCreationForStringStringVariation (_context, callInstruction, variation, ctorUsage);
+				var creationType = ActivatorDetection.EvaluateCreationForStringStringVariation (_context, callInstruction, variation, ctorUsage);
 				if (creationType == null)
 					return false;
 				
@@ -2174,29 +2174,29 @@ namespace Mono.Linker.Steps {
 		/// <param name="information"></param>
 		/// <returns></returns>
 		protected virtual bool TryProcessCastTypeOfCreateInstanceCall (MethodReference createInstanceMethod, Instruction callInstruction,
-			ActivatorUtils.CreateInstanceOverloadVariation variation, ActivatorUtils.CreateInstanceCtorUsage ctorUsage,
+			ActivatorDetection.CreateInstanceOverloadVariation variation, ActivatorDetection.CreateInstanceCtorUsage ctorUsage,
 			out ActivatorCreateInstanceMarkingInformation information)
 		{
 			information = null;
 
 			// There is no casting to detect during `CreateInstance<T>()`
-			if (variation == ActivatorUtils.CreateInstanceOverloadVariation.Generic)
+			if (variation == ActivatorDetection.CreateInstanceOverloadVariation.Generic)
 				return false;
 
-			var castType = ActivatorUtils.EvaluateCastType (callInstruction, variation);
+			var castType = ActivatorDetection.EvaluateCastType (callInstruction, variation);
 			if (castType == null)
 				return false;
 
 			information = new ActivatorCreateInstanceMarkingInformation(
 				castType,
-				ActivatorUtils.CollectConstructorsToMarkForActivatorCreateInstanceUsage,
+				ActivatorDetection.CollectConstructorsToMarkForActivatorCreateInstanceUsage,
 				ctorUsage);
 			return true;
 		}
 		
-		protected void MarkConstructorsToForActivatorCreateInstanceUsage (TypeDefinition type, ActivatorUtils.CreateInstanceCtorUsage usage)
+		protected void MarkConstructorsToForActivatorCreateInstanceUsage (TypeDefinition type, ActivatorDetection.CreateInstanceCtorUsage usage)
 		{
-			foreach (var ctor in ActivatorUtils.CollectConstructorsToMarkForActivatorCreateInstanceUsage (type, usage))
+			foreach (var ctor in ActivatorDetection.CollectConstructorsToMarkForActivatorCreateInstanceUsage (type, usage))
 				MarkMethod (ctor);
 		}
 
@@ -2380,7 +2380,7 @@ namespace Mono.Linker.Steps {
 		}
 		
 		protected class ActivatorCreateInstanceMarkingInformation {
-			public ActivatorCreateInstanceMarkingInformation (TypeDefinition castType, Func<TypeDefinition, ActivatorUtils.CreateInstanceCtorUsage, MethodDefinition[]> constructorCollector, ActivatorUtils.CreateInstanceCtorUsage usage)
+			public ActivatorCreateInstanceMarkingInformation (TypeDefinition castType, Func<TypeDefinition, ActivatorDetection.CreateInstanceCtorUsage, MethodDefinition[]> constructorCollector, ActivatorDetection.CreateInstanceCtorUsage usage)
 			{
 				CastType = castType;
 				ConstructorCollector = constructorCollector;
@@ -2388,8 +2388,8 @@ namespace Mono.Linker.Steps {
 			}
 
 			public TypeDefinition CastType { get; private set; }
-			public Func<TypeDefinition, ActivatorUtils.CreateInstanceCtorUsage, MethodDefinition[]> ConstructorCollector { get; private set; }
-			public ActivatorUtils.CreateInstanceCtorUsage Usage { get; private set; }
+			public Func<TypeDefinition, ActivatorDetection.CreateInstanceCtorUsage, MethodDefinition[]> ConstructorCollector { get; private set; }
+			public ActivatorDetection.CreateInstanceCtorUsage Usage { get; private set; }
 		}
 	}
 
