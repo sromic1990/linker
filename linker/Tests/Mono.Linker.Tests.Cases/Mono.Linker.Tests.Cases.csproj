@@ -317,11 +317,11 @@
     <Compile Include="Reflection.Activator\TypeOverload\Cast\MultipleUsagesInSingleBody.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Cast\UnusedDerivedTypesAreNotMarked.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Cast\UsedDerivedTypesHaveCtorMarked.cs" />
-    <Compile Include="Reflection.Activator\TypeOverload\Create\DetectedByCreationType.cs" />
-    <Compile Include="Reflection.Activator\TypeOverload\Create\DetectedByCreationTypeAndNoDefaultCtor.cs" />
-    <Compile Include="Reflection.Activator\TypeOverload\Create\DetectedByCreationTypeWithCtorArgumentsPreservesAllCtors.cs" />
-    <Compile Include="Reflection.Activator\TypeOverload\Create\DetectedByCreationTypeWithGenericType.cs" />
-    <Compile Include="Reflection.Activator\TypeOverload\Create\DetectedByCreationTypeWithStruct.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\Create\SimpleCreate.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\Create\SimpleCreateAndNoDefaultCtor.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\Create\CreateWithConstructorArguments.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\Create\CreateWithGenericType.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\Create\SimpleCreateWithStruct.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\NoCreationAndNoCast.cs" />
     <Compile Include="Reflection\AssemblyImportedViaReflectionWithDerivedType.cs" />
     <Compile Include="Reflection\AssemblyImportedViaReflectionWithReference.cs" />

@@ -1,7 +1,7 @@
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
 namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Create {
-	public class DetectedByCreationTypeWithStruct {
+	public class SimpleCreate {
 		public static void Main ()
 		{
 			var tmp = System.Activator.CreateInstance (typeof (Foo));
@@ -14,8 +14,15 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Create {
 		}
 
 		[Kept]
-		[KeptMember(".ctor()")]
-		struct Foo {
+		class Foo {
+			[Kept]
+			public Foo ()
+			{
+			}
+
+			public Foo (int arg)
+			{
+			}
 		}
 	}
 }
