@@ -297,6 +297,8 @@
     <Compile Include="Reflection.Activator\NoParameter\NotDetectable.cs" />
     <Compile Include="Reflection.Activator\OtherOverloads\WithActivationContextDoesNothing.cs" />
     <Compile Include="Reflection.Activator\StringOverload\Cast\DetectedByCast.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\Cast\UndetectableBecauseNoUnwrap.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\Cast\UndetectableDueToUnwrap.cs" />
     <Compile Include="Reflection.Activator\StringOverload\Create\CreateWithConstructorArguments.cs" />
     <Compile Include="Reflection.Activator\StringOverload\Create\DifferentAssembly.cs" />
     <Compile Include="Reflection.Activator\StringOverload\Create\SameAssembly.cs" />
