@@ -99,9 +99,6 @@ namespace Mono.Linker {
 			// Don't have the stack eval abilities to figure out the type when non-default ctor overloads are used
 			if (ctorUsage == CreateInstanceCtorUsage.Custom)
 				return null;
-			
-			if (variation == CreateInstanceOverloadVariation.TypeBool)
-				throw new NotImplementedException("TODO by Mike");
 
 			//
 			// Expected pattern is
@@ -112,6 +109,14 @@ namespace Mono.Linker {
 			var previousInstruction = callInstruction.Previous;
 			if (previousInstruction == null)
 				return null;
+			
+			// If it's the overload with a bool then we need to shift back 1 additional instruction
+			if (variation == CreateInstanceOverloadVariation.TypeBool) {
+				previousInstruction = previousInstruction.Previous;
+				if (previousInstruction == null)
+					return null;
+			}
+			
 			var previousPreviousInstruction = previousInstruction.Previous;
 			if (previousPreviousInstruction == null)
 				return null;
@@ -120,6 +125,43 @@ namespace Mono.Linker {
 				return null;
 
 			return (previousPreviousInstruction.Operand as TypeReference)?.Resolve ();
+		}
+
+		public static TypeDefinition EvaluateCreationForStringStringVariation (LinkContext context, Instruction callInstruction, CreateInstanceOverloadVariation variation, CreateInstanceCtorUsage ctorUsage)
+		{
+			if (variation != CreateInstanceOverloadVariation.StringString)
+				throw new ArgumentException($"`{variation}` is not a supported variation");
+			
+			// Don't have the stack eval abilities to figure out the type when non-default ctor overloads are used
+			if (ctorUsage == CreateInstanceCtorUsage.Custom)
+				return null;
+			
+			//
+			// Expected pattern is
+			// IL_0000: ldstr "test"
+			// IL_0005: ldstr "Mono.Linker.Tests.Cases.Reflection.Activator.StringOverload.SameAssembly+Foo"
+			// IL_000a: call class [mscorlib]System.Runtime.Remoting.ObjectHandle [mscorlib]System.Activator::CreateInstance(string, string)
+			//
+			
+			var previousInstruction = callInstruction.Previous;
+			if (previousInstruction == null)
+				return null;
+			
+			var previousPreviousInstruction = previousInstruction.Previous;
+			if (previousPreviousInstruction == null)
+				return null;
+
+			if (previousInstruction.OpCode.Code != Code.Ldstr || previousPreviousInstruction.OpCode.Code != Code.Ldstr)
+				return null;
+
+			var typeName = previousInstruction.Operand as string;
+			var assemblyName = previousPreviousInstruction.Operand as string;
+
+			if (string.IsNullOrEmpty (typeName) || string.IsNullOrEmpty (assemblyName))
+				return null;
+
+			var assemblyDefinition = context.GetAssemblies ().FirstOrDefault (asm => asm.Name.Name == assemblyName);
+			return assemblyDefinition?.MainModule.GetType(typeName.ToCecilName ());
 		}
 
 		public static TypeDefinition EvaluateCastType (Instruction callInstruction, CreateInstanceOverloadVariation variation)

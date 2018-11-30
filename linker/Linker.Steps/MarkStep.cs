@@ -2136,15 +2136,23 @@ namespace Mono.Linker.Steps {
 			
 			case ActivatorUtils.CreateInstanceOverloadVariation.Type:
 			case ActivatorUtils.CreateInstanceOverloadVariation.TypeBool:
+			{
 				var creationType = ActivatorUtils.EvaluateCreationForTypeVariation (callInstruction, variation, ctorUsage);
 				if (creationType == null)
 					return false;
 				
 				MarkConstructorsToForActivatorCreateInstanceUsage (creationType, ctorUsage == ActivatorUtils.CreateInstanceCtorUsage.Default);
 				return true;
-			
+			}
 			case ActivatorUtils.CreateInstanceOverloadVariation.StringString:
-				throw new NotImplementedException("TODO by Mike");
+			{
+				var creationType = ActivatorUtils.EvaluateCreationForStringStringVariation (_context, callInstruction, variation, ctorUsage);
+				if (creationType == null)
+					return false;
+				
+				MarkConstructorsToForActivatorCreateInstanceUsage (creationType, ctorUsage == ActivatorUtils.CreateInstanceCtorUsage.Default);
+				return true;
+			}
 			}
 
 			// It's some overload we can't handle
