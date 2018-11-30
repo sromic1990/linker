@@ -29,7 +29,7 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Cast {
 		}
 
 		[Kept]
-		[PreserveDependency ("Helper()", "Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.DerivedTypesMarkedAfterCreateInstanceAreHandledCorrectly+Jar")]
+		[PreserveDependency ("Helper()", "Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Cast.DerivedTypesMarkedAfterCreateInstanceAreHandledCorrectly+Jar")]
 		static void MethodThatTriggersPreserveDependency ()
 		{
 		}
