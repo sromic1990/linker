@@ -4,24 +4,6 @@ namespace Mono.Linker
 {
 	static class BCL
 	{
-		public static class SystemTypes
-		{
-			public static bool IsString (TypeReference type)
-			{
-				return type.Namespace == "System" && type.Name == "String";
-			}
-			
-			public static bool IsBool (TypeReference type)
-			{
-				return type.Namespace == "System" && type.Name == "Boolean";
-			}
-
-			public static bool IsType (TypeReference type)
-			{
-				return type.Namespace == "System" && type.Name == "Type";
-			}
-		}
-		
 		public static class EventTracingForWindows
 		{
 			public static bool IsEventSourceImplementation (TypeDefinition type, LinkContext context = null)

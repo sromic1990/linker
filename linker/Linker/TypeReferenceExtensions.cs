@@ -231,10 +231,14 @@ namespace Mono.Linker
 					return true;
 
 				if (checkInterfaces) {
-					foreach (var @interface in resolvedType.Interfaces)
-						// TODO by Mike : Need to resolve the interface type before comparing
-						if (@interface.InterfaceType == potentialBaseType)
+					foreach (var @interface in resolvedType.Interfaces) {
+						var resolvedInterfaceType = @interface.InterfaceType.Resolve ();
+						if (resolvedInterfaceType == null)
+							continue;
+
+						if (resolvedInterfaceType == potentialBaseType)
 							return true;
+					}
 				}
 
 				resolvedType = resolvedType.BaseType?.Resolve ();
