@@ -2135,6 +2135,7 @@ namespace Mono.Linker.Steps {
 				return false;
 			
 			case ActivatorUtils.CreateInstanceOverloadVariation.Type:
+			case ActivatorUtils.CreateInstanceOverloadVariation.TypeBool:
 				var creationType = ActivatorUtils.EvaluateCreationForTypeVariation (callInstruction, variation, ctorUsage);
 				if (creationType == null)
 					return false;

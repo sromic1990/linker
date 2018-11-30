@@ -59,7 +59,7 @@ namespace Mono.Linker {
 					ctorUsage = CreateInstanceCtorUsage.Default;
 				
 				// CreateInstance(Type, Bool)
-				if (parameters.Count == 2 && BCL.SystemTypes.IsBool (parameter1.ParameterType)) {
+				if (parameters.Count == 2 && BCL.SystemTypes.IsBool (parameters [1].ParameterType)) {
 					variation = CreateInstanceOverloadVariation.TypeBool;
 					ctorUsage = CreateInstanceCtorUsage.Default;
 				}
@@ -102,7 +102,7 @@ namespace Mono.Linker {
 			
 			if (variation == CreateInstanceOverloadVariation.TypeBool)
 				throw new NotImplementedException("TODO by Mike");
-			
+
 			//
 			// Expected pattern is
 			// IL_0000: ldtoken Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.DetectedByCreationType/Foo
