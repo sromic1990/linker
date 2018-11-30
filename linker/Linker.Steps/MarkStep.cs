@@ -2095,7 +2095,6 @@ namespace Mono.Linker.Steps {
 
 				// if we couldn't figure out the creation type, maybe we can figure out the cast type and infer some precautionary preservations from there
 				if (TryProcessCastTypeOfCreateInstanceCall (methodBeingCalled, instruction, variation, usage, out ActivatorCreateInstanceMarkingInformation information)) {
-					// TODO by Mike : Avoid adding duplicates for the same type.
 					_activatorCreateInstanceTypes.Add (information);
 					continue;
 				}
@@ -2392,7 +2391,6 @@ namespace Mono.Linker.Steps {
 			public TypeDefinition CastType { get; private set; }
 			public Func<TypeDefinition, bool, MethodDefinition[]> ConstructorCollector { get; private set; }
 			public bool DefaultCtorOnly { get; private set; }
-//			public CreateInstanceMarkRules MarkingRules { get; set; }
 		}
 	}
 
