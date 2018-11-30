@@ -42,7 +42,7 @@ namespace Mono.Linker {
 			var parameter1 = parameters [0];
 			
 			// CreateInstance with first param Type
-			if (BCL.SystemTypes.IsType (parameter1.ParameterType)) {
+			if (IsType (parameter1.ParameterType)) {
 				variation = CreateInstanceOverloadVariation.Type;
 				ctorUsage = CreateInstanceCtorUsage.Custom;
 
@@ -51,7 +51,7 @@ namespace Mono.Linker {
 					ctorUsage = CreateInstanceCtorUsage.Default;
 				
 				// CreateInstance(Type, Bool)
-				if (parameters.Count == 2 && BCL.SystemTypes.IsBool (parameters [1].ParameterType)) {
+				if (parameters.Count == 2 && IsBool (parameters [1].ParameterType)) {
 					variation = CreateInstanceOverloadVariation.TypeBool;
 					ctorUsage = CreateInstanceCtorUsage.Default;
 				}
@@ -69,7 +69,7 @@ namespace Mono.Linker {
 			var parameter2 = parameters [1];
 
 			// CreateInstance with string string starting params
-			if (BCL.SystemTypes.IsString (parameter1.ParameterType) && BCL.SystemTypes.IsString (parameter2.ParameterType)) {
+			if (IsString (parameter1.ParameterType) && IsString (parameter2.ParameterType)) {
 				variation = CreateInstanceOverloadVariation.StringString;
 				ctorUsage = parameters.Count == 2 ? CreateInstanceCtorUsage.Default : CreateInstanceCtorUsage.Custom;
 				return true;
@@ -176,9 +176,9 @@ namespace Mono.Linker {
 			return null;
 		}
 
-		public static MethodDefinition [] CollectConstructorsToMarkForActivatorCreateInstanceUsage (TypeDefinition type, bool defaultCtorOnly)
+		public static MethodDefinition [] CollectConstructorsToMarkForActivatorCreateInstanceUsage (TypeDefinition type, CreateInstanceCtorUsage usage)
 		{
-			if (defaultCtorOnly)
+			if (usage == CreateInstanceCtorUsage.Default)
 				return type.Methods.Where (MethodDefinitionExtensions.IsDefaultConstructor).ToArray ();
 
 			return type.Methods.Where (m => m.IsConstructor).ToArray ();
@@ -202,6 +202,21 @@ namespace Mono.Linker {
 		static bool IsMemberOfActivator (MemberReference member)
 		{
 			return member.DeclaringType.Name == "Activator" && member.DeclaringType.Namespace == "System";
+		}
+		
+		static bool IsString (TypeReference type)
+		{
+			return type.Namespace == "System" && type.Name == "String";
+		}
+			
+		static bool IsBool (TypeReference type)
+		{
+			return type.Namespace == "System" && type.Name == "Boolean";
+		}
+
+		static bool IsType (TypeReference type)
+		{
+			return type.Namespace == "System" && type.Name == "Type";
 		}
 	}
 }

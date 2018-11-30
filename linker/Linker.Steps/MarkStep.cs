@@ -225,7 +225,7 @@ namespace Mono.Linker.Steps {
 			foreach (var information in _activatorCreateInstanceTypes) {
 				foreach (var markedType in Annotations.GetMarkedTypes ()) {
 					if (markedType.DerivesFrom (information.CastType)) {
-						foreach (var ctor in information.ConstructorCollector (markedType, information.DefaultCtorOnly)) {
+						foreach (var ctor in information.ConstructorCollector (markedType, information.Usage)) {
 							// TODO by Mike : Need a separate processed hash I think otherwise we won't build up the dependency connection
 							// if the ctor was already marked for some other reason
 							// Need to avoid queuing things that are already marked otherwise we'll never finish marking
@@ -2120,7 +2120,6 @@ namespace Mono.Linker.Steps {
 		/// <param name="variation"></param>
 		/// <param name="ctorUsage"></param>
 		/// <returns></returns>
-		/// <exception cref="NotImplementedException"></exception>
 		protected virtual bool TryProcessCreationTypeOfCreateInstanceCall (MethodBody body, MethodReference createInstanceMethod, Instruction callInstruction,
 			ActivatorUtils.CreateInstanceOverloadVariation variation, ActivatorUtils.CreateInstanceCtorUsage ctorUsage)
 		{
@@ -2131,7 +2130,7 @@ namespace Mono.Linker.Steps {
 					if (resolved == null)
 						return false;
 
-					MarkConstructorsToForActivatorCreateInstanceUsage (resolved, ctorUsage == ActivatorUtils.CreateInstanceCtorUsage.Default);
+					MarkConstructorsToForActivatorCreateInstanceUsage (resolved, ctorUsage);
 					return true;
 				}
 
@@ -2144,7 +2143,7 @@ namespace Mono.Linker.Steps {
 				if (creationType == null)
 					return false;
 				
-				MarkConstructorsToForActivatorCreateInstanceUsage (creationType, ctorUsage == ActivatorUtils.CreateInstanceCtorUsage.Default);
+				MarkConstructorsToForActivatorCreateInstanceUsage (creationType, ctorUsage);
 				return true;
 			}
 			case ActivatorUtils.CreateInstanceOverloadVariation.StringString:
@@ -2153,7 +2152,7 @@ namespace Mono.Linker.Steps {
 				if (creationType == null)
 					return false;
 				
-				MarkConstructorsToForActivatorCreateInstanceUsage (creationType, ctorUsage == ActivatorUtils.CreateInstanceCtorUsage.Default);
+				MarkConstructorsToForActivatorCreateInstanceUsage (creationType, ctorUsage);
 				return true;
 			}
 			}
@@ -2191,13 +2190,13 @@ namespace Mono.Linker.Steps {
 			information = new ActivatorCreateInstanceMarkingInformation(
 				castType,
 				ActivatorUtils.CollectConstructorsToMarkForActivatorCreateInstanceUsage,
-				ctorUsage == ActivatorUtils.CreateInstanceCtorUsage.Default);
+				ctorUsage);
 			return true;
 		}
 		
-		protected void MarkConstructorsToForActivatorCreateInstanceUsage (TypeDefinition type, bool defaultCtorOnly)
+		protected void MarkConstructorsToForActivatorCreateInstanceUsage (TypeDefinition type, ActivatorUtils.CreateInstanceCtorUsage usage)
 		{
-			foreach (var ctor in ActivatorUtils.CollectConstructorsToMarkForActivatorCreateInstanceUsage (type, defaultCtorOnly))
+			foreach (var ctor in ActivatorUtils.CollectConstructorsToMarkForActivatorCreateInstanceUsage (type, usage))
 				MarkMethod (ctor);
 		}
 
@@ -2381,16 +2380,16 @@ namespace Mono.Linker.Steps {
 		}
 		
 		protected class ActivatorCreateInstanceMarkingInformation {
-			public ActivatorCreateInstanceMarkingInformation (TypeDefinition castType, Func<TypeDefinition, bool, MethodDefinition[]> constructorCollector, bool defaultCtorOnly)
+			public ActivatorCreateInstanceMarkingInformation (TypeDefinition castType, Func<TypeDefinition, ActivatorUtils.CreateInstanceCtorUsage, MethodDefinition[]> constructorCollector, ActivatorUtils.CreateInstanceCtorUsage usage)
 			{
 				CastType = castType;
 				ConstructorCollector = constructorCollector;
-				DefaultCtorOnly = defaultCtorOnly;
+				Usage = usage;
 			}
-			
+
 			public TypeDefinition CastType { get; private set; }
-			public Func<TypeDefinition, bool, MethodDefinition[]> ConstructorCollector { get; private set; }
-			public bool DefaultCtorOnly { get; private set; }
+			public Func<TypeDefinition, ActivatorUtils.CreateInstanceCtorUsage, MethodDefinition[]> ConstructorCollector { get; private set; }
+			public ActivatorUtils.CreateInstanceCtorUsage Usage { get; private set; }
 		}
 	}
 
