@@ -2,7 +2,6 @@ using System;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
 namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Cast {
-	[IgnoreTestCase("TODO by Mike: Not supported yet")]
 	public class DetectedByAsCastToInterface {
 		public static void Main ()
 		{
@@ -21,12 +20,13 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Cast {
 			return typeof (Foo);
 		}
 
-		interface IFoo
-		{
+		[Kept]
+		interface IFoo {
 		}
 
 		[Kept]
 		[KeptMember (".ctor()")]
+		[KeptInterface (typeof (IFoo))]
 		class Foo : IFoo {
 		}
 	}
