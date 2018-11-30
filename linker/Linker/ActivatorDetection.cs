@@ -165,6 +165,22 @@ namespace Mono.Linker {
 			if (nextInstruction == null)
 				return null;
 
+			// The StringString variation is harder to detect since the cast will actually come after the Unwrap call.  That Unwrap call could be anywhere
+			// after the CreateInstance call in the body.  Let's at least cover the case where the call is immediately following CreateInstance
+
+			if (variation == CreateInstanceOverloadVariation.StringString && nextInstruction.OpCode.Code == Code.Callvirt) {
+				var nextCallMethod = nextInstruction.Operand as MethodReference;
+				if (nextCallMethod == null)
+					return null;
+
+				if (!IsUnwrap (nextCallMethod))
+					return null;
+
+				nextInstruction = nextInstruction.Next;
+				if (nextInstruction == null)
+					return null;
+			}
+
 			if (nextInstruction.OpCode.Code == Code.Isinst || nextInstruction.OpCode.Code == Code.Castclass) {
 				var instanceBeingCastedToType = nextInstruction.Operand as TypeReference;
 				if (instanceBeingCastedToType == null)
@@ -217,6 +233,11 @@ namespace Mono.Linker {
 		static bool IsType (TypeReference type)
 		{
 			return type.Namespace == "System" && type.Name == "Type";
+		}
+
+		static bool IsUnwrap (MethodReference method)
+		{
+			return method.Name == "Unwrap" && method.Parameters.Count == 0 && method.DeclaringType.Name == "ObjectHandle" && method.DeclaringType.Namespace == "System.Runtime.Remoting";
 		}
 	}
 }
