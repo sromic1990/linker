@@ -296,6 +296,7 @@
     <Compile Include="Reflection.Activator\NoParameter\Detectable.cs" />
     <Compile Include="Reflection.Activator\NoParameter\NotDetectable.cs" />
     <Compile Include="Reflection.Activator\OtherOverloads\WithActivationContextDoesNothing.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\CreateWithConstructorArguments.cs" />
     <Compile Include="Reflection.Activator\StringOverload\Dependencies\OtherAssembly.cs" />
     <Compile Include="Reflection.Activator\StringOverload\DifferentAssembly.cs" />
     <Compile Include="Reflection.Activator\StringOverload\SameAssembly.cs" />

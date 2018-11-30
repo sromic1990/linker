@@ -9,7 +9,7 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator.StringOverload {
 		public static void Main()
 		{
 			OtherAssembly.UsedToKeepReferenceAtCompileTime ();
-			var tmp = System.Activator.CreateInstance ("test", "Mono.Linker.Tests.Cases.Reflection.Activator.StringOverload.Dependencies.OtherAssembly+Foo");
+			var tmp = System.Activator.CreateInstance ("other", "Mono.Linker.Tests.Cases.Reflection.Activator.StringOverload.Dependencies.OtherAssembly+Foo");
 		}
 	}
 }

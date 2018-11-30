@@ -12,11 +12,6 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Create {
 		}
 
 		[Kept]
-		static void HereToUseCreatedInstance (object arg)
-		{
-		}
-
-		[Kept]
 		class PublicAndTrue {
 			[Kept]
 			public PublicAndTrue ()

@@ -4,13 +4,7 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator.StringOverload {
 	public class SameAssembly {
 		public static void Main ()
 		{
-			var tmp = System.Activator.CreateInstance ("test", "Mono.Linker.Tests.Cases.Reflection.Activator.StringOverload.SameAssembly+Foo");
-			HereToUseCreatedInstance (tmp);
-		}
-
-		[Kept]
-		static void HereToUseCreatedInstance (object arg)
-		{
+			System.Activator.CreateInstance ("test", "Mono.Linker.Tests.Cases.Reflection.Activator.StringOverload.SameAssembly+Foo");
 		}
 
 		[Kept]
