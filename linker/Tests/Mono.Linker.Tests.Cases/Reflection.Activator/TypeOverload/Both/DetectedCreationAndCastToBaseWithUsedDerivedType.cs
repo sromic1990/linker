@@ -1,12 +1,13 @@
 using System;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
-	public class UsedDerivedTypesHaveCtorMarked {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Both {
+	// The detected typeof should trump the cast and as a result we should NOT mark the ctor of other derived types
+	public class DetectedCreationAndCastToBaseWithUsedDerivedType {
 		public static void Main()
 		{
 			HereToMarkBarTypeOnly (null);
-			var tmp = System.Activator.CreateInstance (UndetectableWayOfGettingType ()) as Base;
+			var tmp = System.Activator.CreateInstance (typeof (Foo)) as Base;
 			HereToUseCreatedInstance (tmp);
 		}
 
@@ -21,12 +22,6 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
 		}
 
 		[Kept]
-		static Type UndetectableWayOfGettingType ()
-		{
-			return typeof (Foo);
-		}
-
-		[Kept]
 		[KeptMember (".ctor()")]
 		abstract class Base {
 		}
@@ -38,7 +33,6 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
 		}
 
 		[Kept]
-		[KeptMember (".ctor()")]
 		[KeptBaseType (typeof (Base))]
 		class Bar : Base
 		{

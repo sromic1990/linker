@@ -2,7 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Cast {
 	public class DerivedTypesMarkedAfterCreateInstanceAreHandledCorrectly {
 		public static void Main ()
 		{

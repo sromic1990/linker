@@ -1,11 +1,13 @@
 using System;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
+using Mono.Linker.Tests.Cases.Expectations.Metadata;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
-	public class DoesNotCauseNonCtorMethodsToBeMarked {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Cast {
+	[SetupCompileArgument ("/optimize+")]
+	public class DetectedByCastOptimized {
 		public static void Main ()
 		{
-			var tmp = System.Activator.CreateInstance (UndetectableWayOfGettingType ()) as Foo;
+			var tmp = (Foo) System.Activator.CreateInstance (UndetectableWayOfGettingType ());
 			HereToUseCreatedInstance (tmp);
 		}
 		
@@ -23,9 +25,6 @@ namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
 		[Kept]
 		[KeptMember (".ctor()")]
 		class Foo {
-			public void OtherMethod ()
-			{
-			}
 		}
 	}
 }

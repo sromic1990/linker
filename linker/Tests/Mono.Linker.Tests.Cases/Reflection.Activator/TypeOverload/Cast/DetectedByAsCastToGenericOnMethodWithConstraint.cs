@@ -1,21 +1,17 @@
 using System;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
-	public class DetectedByAsCastToGenericOnTypeWithConstraint {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Cast {
+	public class DetectedByAsCastToGenericOnMethodWithConstraint {
 		public static void Main ()
 		{
-			HereToUseCreatedInstance (new Helper<Foo>().Create ());
+			HereToUseCreatedInstance (Create<Foo> ());
 		}
 
 		[Kept]
-		[KeptMember (".ctor()")]
-		class Helper<T> where T : Base {
-			[Kept]
-			public T Create ()
-			{
-				return System.Activator.CreateInstance (UndetectableWayOfGettingType ()) as T;
-			}
+		static T Create<T>() where T : Base
+		{
+			return System.Activator.CreateInstance (UndetectableWayOfGettingType ()) as T;
 		}
 
 		[Kept]

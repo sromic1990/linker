@@ -3,9 +3,9 @@ using Mono.Linker.Tests.Cases.Expectations.Assertions;
 using Mono.Linker.Tests.Cases.Expectations.Metadata;
 using Mono.Linker.Tests.Cases.Reflection.Activator.Dependencies;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
-	[SetupCompileBefore ("base1.dll", new [] {"../Dependencies/BaseTypeDefinedInDifferentAssembly_Lib1.cs"})]
-	[SetupCompileBefore ("base2.dll", new [] {"../Dependencies/BaseTypeDefinedInDifferentAssembly_Lib2.cs"}, new [] {"base1.dll"})]
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Cast {
+	[SetupCompileBefore ("base1.dll", new [] {"../../Dependencies/BaseTypeDefinedInDifferentAssembly_Lib1.cs"})]
+	[SetupCompileBefore ("base2.dll", new [] {"../../Dependencies/BaseTypeDefinedInDifferentAssembly_Lib2.cs"}, new [] {"base1.dll"})]
 	[KeptMemberInAssembly ("base1.dll", typeof (BaseTypeDefinedInDifferentAssembly_Lib1), ".ctor()")]
 	[KeptMemberInAssembly ("base2.dll", typeof (BaseTypeDefinedInDifferentAssembly_Lib2), ".ctor()")]
 	public class BaseTypeDefinedInDifferentAssembly {

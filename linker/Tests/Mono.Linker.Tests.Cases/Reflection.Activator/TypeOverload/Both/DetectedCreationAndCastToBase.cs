@@ -1,6 +1,6 @@
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Both {
 	public class DetectedCreationAndCastToBase {
 		public static void Main ()
 		{

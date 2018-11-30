@@ -1,7 +1,7 @@
 using System;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Cast {
 	public class CreateInstanceWithCtorArgumentsPreservesAllCtors {
 		public static void Main ()
 		{

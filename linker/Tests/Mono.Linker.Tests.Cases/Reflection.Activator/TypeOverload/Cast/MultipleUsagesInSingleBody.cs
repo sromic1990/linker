@@ -1,10 +1,8 @@
 using System;
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload
-{
-	public class MultipleUsagesInSingleBody
-	{
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Cast {
+	public class MultipleUsagesInSingleBody {
 		public static void Main ()
 		{
 			var tmp = System.Activator.CreateInstance (UndetectableWayOfGettingType ()) as Base;
