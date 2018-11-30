@@ -1,10 +1,10 @@
 using Mono.Linker.Tests.Cases.Expectations.Assertions;
 
-namespace Mono.Linker.Tests.Cases.Reflection.Activator.StringOverload {
+namespace Mono.Linker.Tests.Cases.Reflection.Activator.StringOverload.Create {
 	public class SameAssembly {
 		public static void Main ()
 		{
-			System.Activator.CreateInstance ("test", "Mono.Linker.Tests.Cases.Reflection.Activator.StringOverload.SameAssembly+Foo");
+			System.Activator.CreateInstance ("test", "Mono.Linker.Tests.Cases.Reflection.Activator.StringOverload.Create.SameAssembly+Foo");
 		}
 
 		[Kept]

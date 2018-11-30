@@ -296,11 +296,12 @@
     <Compile Include="Reflection.Activator\NoParameter\Detectable.cs" />
     <Compile Include="Reflection.Activator\NoParameter\NotDetectable.cs" />
     <Compile Include="Reflection.Activator\OtherOverloads\WithActivationContextDoesNothing.cs" />
-    <Compile Include="Reflection.Activator\StringOverload\CreateWithConstructorArguments.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\Cast\DetectedByCast.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\Create\CreateWithConstructorArguments.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\Create\DifferentAssembly.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\Create\SameAssembly.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\Create\UnreferencedAssembly.cs" />
     <Compile Include="Reflection.Activator\StringOverload\Dependencies\OtherAssembly.cs" />
-    <Compile Include="Reflection.Activator\StringOverload\DifferentAssembly.cs" />
-    <Compile Include="Reflection.Activator\StringOverload\SameAssembly.cs" />
-    <Compile Include="Reflection.Activator\StringOverload\UnreferencedAssembly.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Both\CreateAndCastToBase.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Both\CreateAndCastToBaseWithUsedDerivedType.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Both\CreateAndCastToSameType.cs" />
@@ -312,6 +313,7 @@
     <Compile Include="Reflection.Activator\TypeOverload\Cast\CreateInstanceWithCtorArgumentsPreservesAllCtors.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Cast\DerivedTypesMarkedAfterCreateInstanceAreHandledCorrectly.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Cast\DetectedAsCast.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\Cast\DetectedAsCastManyArgOverloads.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Cast\DetectedByAsCastOptimized.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Cast\DetectedByAsCastToGenericOnMethodWithConstraint.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Cast\DetectedByAsCastToGenericOnMethodWithoutKnowableConstraint.cs" />
