@@ -300,6 +300,7 @@
     <Compile Include="Reflection.Activator\TypeOverload\Both\CreateAndCastToBaseWithUsedDerivedType.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Both\CreateAndCastToSameType.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Both\CreateAndCastToSameTypeForStruct.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\Both\NoDefaultCtorAndCastToSameType.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Cast\AtEndOfBody.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Cast\BaseTypeDefinedInDifferentAssembly.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Cast\CreateInstanceWithCtorArgumentsPreservesAllCtors.cs" />
