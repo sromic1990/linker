@@ -232,7 +232,7 @@ namespace Mono.Linker
 
 				if (checkInterfaces) {
 					foreach (var @interface in resolvedType.Interfaces) {
-						var resolvedInterfaceType = @interface.InterfaceType.Resolve();
+						var resolvedInterfaceType = @interface.InterfaceType.Resolve ();
 						if (resolvedInterfaceType == null)
 							continue;
 

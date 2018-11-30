@@ -5,9 +5,7 @@ using Mono.Cecil.Cil;
 
 namespace Mono.Linker {
 	public static class ActivatorUtils {
-
-		public enum CreateInstanceOverloadVariation
-		{
+		public enum CreateInstanceOverloadVariation {
 			Unknown,
 			Generic,
 			Type,
@@ -16,23 +14,17 @@ namespace Mono.Linker {
 			Other
 		}
 
-		public enum CreateInstanceCtorUsage
-		{
+		public enum CreateInstanceCtorUsage {
 			Unknown,
 			Default,
 			Custom
-		}
-		
-		public static bool IsMemberOfActivator (MemberReference member)
-		{
-			return member.DeclaringType.Name == "Activator" && member.DeclaringType.Namespace == "System";
 		}
 
 		public static bool TryParseUsage (MethodReference method, out CreateInstanceOverloadVariation variation, out CreateInstanceCtorUsage ctorUsage)
 		{
 			variation = CreateInstanceOverloadVariation.Unknown;
 			ctorUsage = CreateInstanceCtorUsage.Unknown;
-			
+
 			if (!IsMemberOfActivator (method))
 				return false;
 
@@ -45,7 +37,7 @@ namespace Mono.Linker {
 				ctorUsage = CreateInstanceCtorUsage.Default;
 				return true;
 			}
-			
+
 			var parameters = method.Parameters;
 			var parameter1 = parameters [0];
 			
@@ -91,10 +83,10 @@ namespace Mono.Linker {
 		public static TypeDefinition EvaluateCreationForTypeVariation (Instruction callInstruction, CreateInstanceOverloadVariation variation, CreateInstanceCtorUsage ctorUsage)
 		{
 			if (variation != CreateInstanceOverloadVariation.Type && variation != CreateInstanceOverloadVariation.TypeBool)
-				throw new ArgumentException($"`{variation}` is not a supported variation");
+				throw new ArgumentException ($"`{variation}` is not a supported variation");
 			
 			if (ctorUsage == CreateInstanceCtorUsage.Unknown)
-				throw new ArgumentException($"`{ctorUsage}` is not a supported ctor usage");
+				throw new ArgumentException ($"`{ctorUsage}` is not a supported ctor usage");
 
 			// Don't have the stack eval abilities to figure out the type when non-default ctor overloads are used
 			if (ctorUsage == CreateInstanceCtorUsage.Custom)
@@ -130,7 +122,7 @@ namespace Mono.Linker {
 		public static TypeDefinition EvaluateCreationForStringStringVariation (LinkContext context, Instruction callInstruction, CreateInstanceOverloadVariation variation, CreateInstanceCtorUsage ctorUsage)
 		{
 			if (variation != CreateInstanceOverloadVariation.StringString)
-				throw new ArgumentException($"`{variation}` is not a supported variation");
+				throw new ArgumentException ($"`{variation}` is not a supported variation");
 			
 			// Don't have the stack eval abilities to figure out the type when non-default ctor overloads are used
 			if (ctorUsage == CreateInstanceCtorUsage.Custom)
@@ -161,7 +153,7 @@ namespace Mono.Linker {
 				return null;
 
 			var assemblyDefinition = context.GetAssemblies ().FirstOrDefault (asm => asm.Name.Name == assemblyName);
-			return assemblyDefinition?.MainModule.GetType(typeName.ToCecilName ());
+			return assemblyDefinition?.MainModule.GetType (typeName.ToCecilName ());
 		}
 
 		public static TypeDefinition EvaluateCastType (Instruction callInstruction, CreateInstanceOverloadVariation variation)
@@ -197,8 +189,6 @@ namespace Mono.Linker {
 			if (!activationCastType.IsGenericInstance && !activationCastType.IsGenericParameter)
 				return activationCastType.Resolve ();
 
-//			var tmp = TypeReferenceExtensions.InflateGenericType((GenericInstanceType)activationCastType, activationCastType);
-
 			if (activationCastType is GenericParameter genericParameter) {
 				if (!genericParameter.HasConstraints)
 					return null;
@@ -206,8 +196,12 @@ namespace Mono.Linker {
 				return genericParameter.Constraints [0].Resolve ();
 			}
 
-//			return TypeResolver.For(callingBody.Method.DeclaringType, callingBody.Method).Resolve(activationCastType);
 			return null;
+		}
+
+		static bool IsMemberOfActivator (MemberReference member)
+		{
+			return member.DeclaringType.Name == "Activator" && member.DeclaringType.Namespace == "System";
 		}
 	}
 }

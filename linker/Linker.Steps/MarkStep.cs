@@ -2089,9 +2089,6 @@ namespace Mono.Linker.Steps {
 					continue;
 
 				if (TryProcessCreationTypeOfCreateInstanceCall (body, methodBeingCalled, instruction, variation, usage)) {
-//						foreach (var ctor in ctorsToMark)
-//							MarkMethod (ctor);
-					
 					// If we managed to figure out the actual type being created then our work is done
 					continue;
 				}
@@ -2099,10 +2096,17 @@ namespace Mono.Linker.Steps {
 				// if we couldn't figure out the creation type, maybe we can figure out the cast type and infer some precautionary preservations from there
 				if (TryProcessCastTypeOfCreateInstanceCall (methodBeingCalled, instruction, variation, usage, out ActivatorCreateInstanceMarkingInformation information)) {
 					// TODO by Mike : Avoid adding duplicates for the same type.
-					_activatorCreateInstanceTypes.Add(information);
+					_activatorCreateInstanceTypes.Add (information);
 					continue;
 				}
+
+				UndetectableActivatorCreateInstanceUsage (body, methodBeingCalled, instruction, variation, usage);
 			}
+		}
+
+		protected virtual void UndetectableActivatorCreateInstanceUsage (MethodBody body, MethodReference createInstanceMethod, Instruction callInstruction, ActivatorUtils.CreateInstanceOverloadVariation variation, ActivatorUtils.CreateInstanceCtorUsage ctorUsage)
+		{
+			// At some point it would be nice to record undetectable reflection usage so that we can report it somehow.
 		}
 
 		/// <summary>
@@ -2194,16 +2198,6 @@ namespace Mono.Linker.Steps {
 		
 		protected void MarkConstructorsToForActivatorCreateInstanceUsage (TypeDefinition type, bool defaultCtorOnly)
 		{
-//			if (defaultCtorOnly) {
-//				var ctor = type.Methods.FirstOrDefault (MethodDefinitionExtensions.IsDefaultConstructor);
-//				if (ctor != null) {
-//					MarkMethod (ctor);
-//					return true;
-//				}
-//
-//				return false;
-//			}
-
 			foreach (var ctor in ActivatorUtils.CollectConstructorsToMarkForActivatorCreateInstanceUsage (type, defaultCtorOnly))
 				MarkMethod (ctor);
 		}
