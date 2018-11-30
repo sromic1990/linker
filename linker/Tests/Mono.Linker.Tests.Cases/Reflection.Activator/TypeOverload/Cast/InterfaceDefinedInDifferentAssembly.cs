@@ -4,7 +4,7 @@ using Mono.Linker.Tests.Cases.Expectations.Metadata;
 using Mono.Linker.Tests.Cases.Reflection.Activator.Dependencies;
 
 namespace Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.Cast {
-	[SetupCompileBefore ("base1.dll", new [] {"../Dependencies/InterfaceDefinedInDifferentAssembly_Lib.cs"})]
+	[SetupCompileBefore ("base1.dll", new [] {"../../Dependencies/InterfaceDefinedInDifferentAssembly_Lib.cs"})]
 	public class InterfaceDefinedInDifferentAssembly {
 		public static void Main ()
 		{

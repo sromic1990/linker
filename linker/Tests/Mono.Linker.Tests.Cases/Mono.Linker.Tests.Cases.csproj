@@ -296,6 +296,10 @@
     <Compile Include="Reflection.Activator\NoParameter\Detectable.cs" />
     <Compile Include="Reflection.Activator\NoParameter\NotDetectable.cs" />
     <Compile Include="Reflection.Activator\OtherOverloads\WithActivationContextDoesNothing.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\Dependencies\OtherAssembly.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\DifferentAssembly.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\SameAssembly.cs" />
+    <Compile Include="Reflection.Activator\StringOverload\UnreferencedAssembly.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Both\CreateAndCastToBase.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Both\CreateAndCastToBaseWithUsedDerivedType.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Both\CreateAndCastToSameType.cs" />
@@ -322,6 +326,7 @@
     <Compile Include="Reflection.Activator\TypeOverload\Create\SimpleCreateAndNoDefaultCtor.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Create\CreateWithConstructorArguments.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Create\CreateWithGenericType.cs" />
+    <Compile Include="Reflection.Activator\TypeOverload\Create\SimpleCreateBoolOverload.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\Create\SimpleCreateWithStruct.cs" />
     <Compile Include="Reflection.Activator\TypeOverload\NoCreationAndNoCast.cs" />
     <Compile Include="Reflection\AssemblyImportedViaReflectionWithDerivedType.cs" />
@@ -580,7 +585,6 @@
   <ItemGroup>
     <Folder Include="Attributes.StructLayout\" />
     <Folder Include="Inheritance.Complex" />
-    <Folder Include="Reflection.Activator\StringOverload" />
     <Folder Include="Reflection\Dependencies\" />
     <Folder Include="BCLFeatures\" />
     <Folder Include="BCLFeatures\ETW\" />
