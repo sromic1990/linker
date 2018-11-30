@@ -2140,7 +2140,7 @@ namespace Mono.Linker.Steps {
 				// All other overloads starting with Type have a ctor args param so we have to mark everything for those
 				return CreateInstanceMarkRules.All;
 			}
-			
+
 			if (parameters.Count >= 2 && BCL.SystemTypes.IsString (parameter1.ParameterType) && BCL.SystemTypes.IsString (parameters [1].ParameterType)) {
 				// CreateInstance(String, String)
 				if (parameters.Count == 2)
