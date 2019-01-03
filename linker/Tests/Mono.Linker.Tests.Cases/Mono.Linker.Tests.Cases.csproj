@@ -176,6 +176,10 @@
     <Compile Include="Inheritance.AbstractClasses\UnusedVirtualMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfAbstractMethodIsKept.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfVirtualMethodIsKept.cs" />
+    <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceTypeInOtherUsedOnlyByCopiedAssemblyExplicit_Copy.cs" />
+    <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceTypeInOtherUsedOnlyByCopiedAssemblyExplicit_Link.cs" />
+    <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceTypeInOtherUsedOnlyByCopiedAssembly_Copy.cs" />
+    <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceTypeInOtherUsedOnlyByCopiedAssembly_Link.cs" />
     <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceWithInterfaceFromOtherAssemblyWhenExplicitMethodUsed_Lib.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassImplementingInterfaceMethodsNested.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\ClassImplementingInterfaceMethodsNested2.cs" />
@@ -190,6 +194,8 @@
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter2.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceMarkOrderingDoesNotMatter3.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceTypeInOtherUsedOnlyByCopiedAssembly.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceTypeInOtherUsedOnlyByCopiedAssemblyExplicit.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceUsedOnlyAsConstraintIsKept.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceWithInterfaceFromOtherAssemblyWhenExplicitMethodUsed.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\InterfaceTypeOnlyUsedHasInterfacesRemoved.cs" />
@@ -221,6 +227,7 @@
     <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedComInterfaceIsRemovedWhenComFeatureExcluded.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedExplicitInterfaceHasMethodPreservedViaXml.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedExplicitInterfaceIsRemoved.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedInterfaceHasMethodPreservedViaXml.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\UnusedInterfaceTypeIsRemoved.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\NoKeptCtor\InterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsed.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\NoKeptCtor\InterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsedWithCctor.cs" />
@@ -231,7 +238,9 @@
     <Compile Include="Inheritance.Interfaces\OnValueType\StructUsedFromConcreteTypeHasInterfaceMethodRemoved.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\StructUsedFromConcreteTypeHasInterfaceMethodRemoved2.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\StructUsedFromInterfaceHasInterfaceMethodKept.cs" />
+    <Compile Include="Inheritance.Interfaces\OnValueType\UnusedExplicitInterfaceHasMethodPreservedViaXml.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\UnusedExplicitInterfaceIsRemoved.cs" />
+    <Compile Include="Inheritance.Interfaces\OnValueType\UnusedInterfaceHasMethodPreservedViaXml.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\UnusedInterfaceTypeIsRemoved.cs" />
     <Compile Include="Inheritance.VirtualMethods\HarderToDetectUnusedVirtualMethodGetsRemoved.cs" />
     <Compile Include="Inheritance.VirtualMethods\UnusedTypeWithOverrideOfVirtualMethodIsRemoved.cs" />
@@ -306,6 +315,7 @@
     <Compile Include="Reflection\PropertyUsedViaReflection.cs" />
     <Compile Include="Reflection\TypeUsedViaReflection.cs" />
     <Compile Include="Reflection\TypeUsedViaReflectionAssemblyDoesntExist.cs" />
+    <Compile Include="Reflection\TypeUsedViaReflectionInDifferentAssembly.cs" />
     <Compile Include="Reflection\TypeUsedViaReflectionLdstrIncomplete.cs" />
     <Compile Include="Reflection\TypeUsedViaReflectionLdstrValidButChanged.cs" />
     <Compile Include="Reflection\TypeUsedViaReflectionTypeDoesntExist.cs" />
@@ -488,6 +498,9 @@
     <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveFields.xml" />
     <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveMethods.xml" />
     <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeWithPreserveMethodsAndInterfaceTypeMarked.xml" />
+    <Content Include="Inheritance.Interfaces\OnReferenceType\UnusedInterfaceHasMethodPreservedViaXml.xml" />
+    <Content Include="Inheritance.Interfaces\OnValueType\UnusedExplicitInterfaceHasMethodPreservedViaXml.xml" />
+    <Content Include="Inheritance.Interfaces\OnValueType\UnusedInterfaceHasMethodPreservedViaXml.xml" />
     <Content Include="LinkXml\AssemblyWithPreserveAll.xml" />
     <Content Include="LinkXml\CanPreserveTypesUsingRegex.xml" />
     <Content Include="LinkXml\CanPreserveAnExportedType.xml" />
