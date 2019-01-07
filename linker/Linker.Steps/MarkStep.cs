@@ -46,6 +46,7 @@ namespace Mono.Linker.Steps {
 		protected Queue<AttributeProviderPair> _assemblyLevelAttributes;
 		protected Queue<AttributeProviderPair> _lateMarkedAttributes;
 		protected List<TypeDefinition> _typesWithInterfaces;
+		protected HashSet<TypeDefinition> _baseTypeHierarchyMarked;
 
 		public AnnotationStore Annotations {
 			get { return _context.Annotations; }
@@ -64,6 +65,7 @@ namespace Mono.Linker.Steps {
 			_assemblyLevelAttributes = new Queue<AttributeProviderPair> ();
 			_lateMarkedAttributes = new Queue<AttributeProviderPair> ();
 			_typesWithInterfaces = new List<TypeDefinition> ();
+			_baseTypeHierarchyMarked = new HashSet<TypeDefinition>();
 		}
 
 		public virtual void Process (LinkContext context)
@@ -263,8 +265,12 @@ namespace Mono.Linker.Steps {
 				return;
 
 			// We don't need to mark overrides until it is possible that the type could be instantiated
-			// Note : The base type is interface check should be removed once we have base type sweeping
-			if (!Annotations.IsInstantiated (method.DeclaringType) && @base.DeclaringType.IsInterface)
+			if (!Annotations.IsInstantiated (method.DeclaringType) && !Annotations.IsBaseRequired (method.DeclaringType))
+				return;
+
+			// If the type is not instantiated, but it's base type is required for some reason, we can still skip marking of the override if the base method
+			// is not abstract
+			if (!Annotations.IsInstantiated (method.DeclaringType) && Annotations.IsBaseRequired (method.DeclaringType) && !@base.IsAbstract)
 				return;
 
 			MarkMethod (method);
@@ -870,6 +876,7 @@ namespace Mono.Linker.Steps {
 			MarkCustomAttributes (field);
 			MarkMarshalSpec (field);
 			DoAdditionalFieldProcessing (field);
+			MarkTypeHierarchyRequirementsCausedByField (field, field.DeclaringType);
 
 			var parent = reference.DeclaringType.Resolve ();
 			if (!Annotations.HasPreservedStaticCtor (parent))
@@ -937,7 +944,6 @@ namespace Mono.Linker.Steps {
 			Tracer.Push (type);
 
 			MarkScope (type.Scope);
-			MarkType (type.BaseType);
 			MarkType (type.DeclaringType);
 			MarkCustomAttributes (type);
 			MarkSecurityDeclarations (type);
@@ -983,6 +989,8 @@ namespace Mono.Linker.Steps {
 				//    this type is going to retain the interface implementation
 				MarkRequirementsForInstantiatedTypes (type);
 			}
+
+			MarkBaseTypeRequiredForCasesThatAreNotSupported (type);
 
 			if (type.HasInterfaces)
 				_typesWithInterfaces.Add (type);
@@ -1694,9 +1702,17 @@ namespace Mono.Linker.Steps {
 			MarkSecurityDeclarations (method);
 
 			MarkGenericParameterProvider (method);
+			MarkTypeHierarchyRequirementsCausedByMethodVisibility (method, method.DeclaringType);
 
-			if (ShouldMarkAsInstancePossible (method))
+			if (ShouldMarkAsInstancePossible (method)) {
 				MarkRequirementsForInstantiatedTypes (method.DeclaringType);
+				
+				// If it's an extern ctor such as EventHandler's ctor, we won't have any IL to
+				// cause a ctor to be marked in the base type.   We know the base type needs to retain it's base,
+				// and that goes for all base types in the hierarchy 
+				if (!method.HasBody)
+					MarkBaseHierarchyAsRequired (method.DeclaringType);
+			}
 
 			if (IsPropertyMethod (method))
 				MarkProperty (GetProperty (method));
@@ -1751,6 +1767,27 @@ namespace Mono.Linker.Steps {
 		{
 		}
 
+		void MarkBaseHierarchyAsRequired (TypeDefinition type)
+		{
+			_baseTypeHierarchyMarked.Add (type);
+			Annotations.MarkBaseRequired (type);
+			if (type.BaseType != null)
+				MarkType (type.BaseType);
+
+			// We could resolve the base and recursively call ourselves but already have a list
+			// of the bases built up so let's just use that.
+			var bases = Annotations.GetBaseHierarchy (type);
+			if (bases == null)
+				return;
+
+			foreach (var @base in bases) {
+				_baseTypeHierarchyMarked.Add (type);
+				Annotations.MarkBaseRequired (@base);
+				if (@base.BaseType != null)
+					MarkType (@base.BaseType);
+			}
+		}
+
 		protected virtual bool ShouldMarkAsInstancePossible (MethodDefinition method)
 		{
 			// We don't need to mark it multiple times
@@ -1772,7 +1809,7 @@ namespace Mono.Linker.Steps {
 				return;
 
 			Annotations.MarkInstantiated (type);
-
+			MarkBaseHierarchyAsRequired (type);
 			MarkInterfaceImplementations (type);
 			MarkMethodsIf (type.Methods, IsVirtualAndHasPreservedParent);
 			DoAdditionalInstantiatedTypeProcessing (type);
@@ -1833,13 +1870,117 @@ namespace Mono.Linker.Steps {
 				_context.MarkedKnownMembers.NotSupportedExceptionCtorString = nseCtor;
 				break;
 			}
-		}		
+		}
+
+		/// <summary>
+		/// Figuring out the visibility rules when nested classes are involved gets very complicated
+		/// and is likely not worth the effort to implement.  Instead of trying to implement that, this method is here to
+		/// mark the base type required in any situations we are not going to try and detect
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		bool MarkBaseTypeRequiredForCasesThatAreNotSupported (TypeDefinition type)
+		{
+			if (!type.IsClass || type.BaseType == null)
+				return false;
+
+			foreach (var @base in Annotations.GetBaseHierarchy (type)) {
+				if (@base.HasNestedTypes) {
+					MarkBaseHierarchyAsRequired (type);
+					return true;
+				}
+			}
+
+			if (type.DeclaringType != null) {
+				if (MarkBaseTypeRequiredForCasesThatAreNotSupported (type.DeclaringType)) {
+					MarkBaseHierarchyAsRequired (type);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		void MarkBaseRequirements (MethodBody body)
+		{
+			var type = body.Method.DeclaringType;
+
+			// We do not currently change the base type of value types
+			if (type.IsValueType)
+				return;
+			
+			// No need to do this for types derived from object.  It already has the lowest base class
+			if (type.BaseType == null || type.BaseType.Resolve ()?.BaseType == null)
+				return;
+
+			foreach (var instruction in body.Instructions) {
+				if (instruction.Operand == null)
+					continue;
+
+				if (instruction.Operand is FieldReference fieldReference) {
+					MarkBaseRequirementsFromBody (fieldReference, body);
+				} else if (instruction.Operand is MethodReference methodReference) {
+					MarkBaseRequirementsFromBody(methodReference, body);
+				}
+			}
+		}
+		
+		void MarkBaseRequirementsFromBody (FieldReference field, MethodBody body)
+		{
+			MarkTypeHierarchyRequirementsCausedByField (field, body.Method.DeclaringType);
+		}
+		
+		void MarkBaseRequirementsFromBody (MethodReference method, MethodBody body)
+		{
+			var visibilityScope = body.Method.DeclaringType;
+			MarkTypeHierarchyRequirementsCausedByMethodConstraints (method);
+			MarkTypeHierarchyRequirementsCausedByMethodVisibility (method, visibilityScope);
+		}
+
+		void MarkTypeHierarchyRequirementsCausedByField (FieldReference field, TypeDefinition visibilityScope)
+		{
+			if (!_baseTypeHierarchyMarked.Contains (visibilityScope) && BaseMarkingUtils.ShouldMarkTypeHierarchyForField (_context, field, visibilityScope))
+				MarkBaseHierarchyAsRequired (visibilityScope);
+		}
+
+		void MarkTypeHierarchyRequirementsCausedByMethodConstraints (MethodReference method)
+		{
+			var resolvedMethod = method.Resolve ();
+			if (resolvedMethod == null)
+				return;
+
+			// This is a little overly simplistic, we could be more precise, but at the moment it's not worth the added complexity.
+			// If the method has any constraints, mark each generic argument as needing it's base.
+			// Technically, we only need to do this for the generic arguments that have constraints, but this is such niche edge case
+			// that it's not worth the added complexity
+			if (resolvedMethod.GenericParameters.Any (param => param.HasConstraints)) {
+				if (method is IGenericInstance genericInstanceMethod) {
+					foreach (var genericArgumentType in genericInstanceMethod.GenericArguments) {
+						var resolvedGenericArgumentType = genericArgumentType.Resolve ();
+						if (resolvedGenericArgumentType == null || _baseTypeHierarchyMarked.Contains (resolvedGenericArgumentType))
+							continue;
+
+						MarkBaseHierarchyAsRequired (resolvedGenericArgumentType);
+					}
+				}
+			}
+		}
+
+		void MarkTypeHierarchyRequirementsCausedByMethodVisibility (MethodReference method, TypeDefinition visibilityScope)
+		{
+			if (!_baseTypeHierarchyMarked.Contains (visibilityScope) && BaseMarkingUtils.ShouldMarkTypeHierarchyForMethod (_context, method, visibilityScope)) {
+				MarkBaseHierarchyAsRequired (visibilityScope);
+			}
+		}
 
 		void MarkBaseMethods (MethodDefinition method)
 		{
 			var base_methods = Annotations.GetBaseMethods (method);
 			if (base_methods == null)
 				return;
+
+			// Once an override method is marked for any reason we can no longer change the base class
+			MarkBaseHierarchyAsRequired (method.DeclaringType);
 
 			foreach (MethodDefinition base_method in base_methods) {
 				if (base_method.DeclaringType.IsInterface && !method.DeclaringType.IsInterface)
@@ -1976,6 +2117,7 @@ namespace Mono.Linker.Steps {
 			foreach (Instruction instruction in body.Instructions)
 				MarkInstruction (instruction);
 
+			MarkBaseRequirements (body);
 			MarkThingsUsedViaReflection (body);
 
 			PostMarkMethodBody (body);
