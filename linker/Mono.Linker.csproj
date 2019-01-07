@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <!--
       TODO: Remove this workaround once supported.
@@ -91,6 +91,7 @@
     <Compile Include="Linker\MethodAction.cs" />
     <Compile Include="Linker\MethodReferenceExtensions.cs" />
     <Compile Include="Linker\Pipeline.cs" />
+    <Compile Include="Linker\TypeDefinitionExtensions.cs" />
     <Compile Include="Linker\TypePreserve.cs" />
     <Compile Include="Linker\TypeReferenceExtensions.cs" />
     <Compile Include="Linker\TypeNameParser.cs" />

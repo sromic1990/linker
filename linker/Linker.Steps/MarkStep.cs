@@ -1991,6 +1991,7 @@ namespace Mono.Linker.Steps {
 			MarkSomethingUsedViaReflection ("GetField", MarkFieldUsedViaReflection, body.Instructions);
 			MarkSomethingUsedViaReflection ("GetEvent", MarkEventUsedViaReflection, body.Instructions);
 			MarkTypeUsedViaReflection (body.Instructions);
+			MarkActivatorCreateInstance (body);
 		}
 
 		protected virtual void MarkInstruction (Instruction instruction)
@@ -2069,6 +2070,134 @@ namespace Mono.Linker.Steps {
 				return false;
 
 			return true;
+		}
+
+		void MarkActivatorCreateInstance (MethodBody body)
+		{
+			var instructions = body.Instructions;
+			for (var i = 0; i < instructions.Count; i++) {
+				var instruction = instructions [i];
+
+				if (instruction.OpCode != OpCodes.Call && instruction.OpCode != OpCodes.Callvirt)
+					continue;
+
+				var methodBeingCalled = instruction.Operand as MethodReference;
+				if (methodBeingCalled == null)
+					continue;
+
+				if (!BCL.Activator.IsCreateInstance (methodBeingCalled))
+					continue;
+
+				var detected = false;
+
+				if (BCL.Activator.IsCreateInstanceWithGeneric (methodBeingCalled))
+					detected = MarkCreateInstanceWithGeneric (methodBeingCalled);
+				else if (BCL.Activator.IsCreateInstanceWithType (methodBeingCalled))
+					detected = MarkCreateInstanceWithType (body, methodBeingCalled, instruction);
+				else if (BCL.Activator.IsCreateInstanceWithStringString(methodBeingCalled))
+					detected = MarkCreateInstanceWithStringString(body, methodBeingCalled, instruction);
+				else
+					detected = false;
+				
+				if (!detected)
+					UnhandledActivatorCreateInstanceUsage (body, methodBeingCalled, instruction);
+			}
+		}
+		
+		// TODO by Mike : Refactor to general reflection and do rechecks in our code?
+		protected virtual void UnhandledActivatorCreateInstanceUsage (MethodBody body, MethodReference createInstanceMethod, Instruction callInstruction)
+		{
+			// At some point it would be nice to record undetectable reflection usage so that we can report it somehow.
+		}
+		
+		protected virtual bool MarkCreateInstanceWithGeneric (MethodReference method)
+		{
+			if (method is GenericInstanceMethod genericInstanceMethod) {
+				var resolved = genericInstanceMethod.GenericArguments [0].Resolve ();
+				if (resolved == null)
+					return false;
+
+				var ctor = resolved.GetDefaultConstructor ();
+				if (ctor == null)
+					return false;
+
+				_context.Tracer.Push ($"Reflection-ActivatorUsage {ctor}");
+				try {
+					MarkMethod (ctor);
+				} finally {
+					_context.Tracer.Pop ();
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+		
+		/// <summary>
+		/// Note : Extra unused arguments are passed so that derived MarkStep's can try to do more sophisticated detection if they choose
+		/// </summary>
+		/// <param name="callingBody"></param>
+		/// <param name="method"></param>
+		/// <param name="callInstruction"></param>
+		/// <returns></returns>
+		protected virtual bool MarkCreateInstanceWithType (MethodBody callingBody, MethodReference method, Instruction callInstruction)
+		{
+			if (method.Parameters.Count == 0 || method.Parameters.Count > 2)
+				return false;
+			//
+			// Expected pattern is
+			// IL_0000: ldtoken Mono.Linker.Tests.Cases.Reflection.Activator.TypeOverload.DetectedByCreationType/Foo
+			// IL_0005: call class [mscorlib]System.Type [mscorlib]System.Type::GetTypeFromHandle(valuetype [mscorlib]System.RuntimeTypeHandle)
+			// IL_000a: call object [mscorlib]System.Activator::CreateInstance(class [mscorlib]System.Type)
+			//
+			var previousInstruction = callInstruction.Previous;
+			if (previousInstruction == null)
+				return false;
+			
+			// If it's the overload with a bool then we need to shift back 1 additional instruction
+			if (method.Parameters.Count == 2 && method.Parameters [1].ParameterType.MetadataType == MetadataType.Boolean) {
+				previousInstruction = previousInstruction.Previous;
+				if (previousInstruction == null)
+					return false;
+			}
+
+			var previousPreviousInstruction = previousInstruction.Previous;
+			if (previousPreviousInstruction == null)
+				return false;
+
+			if (previousInstruction.OpCode.Code != Code.Call || previousPreviousInstruction.OpCode.Code != Code.Ldtoken)
+				return false;
+
+			var creationType = (previousPreviousInstruction.Operand as TypeReference)?.Resolve ();
+
+			if (creationType == null)
+				return false;
+
+			// We can only detect the cases that don't use ctor arguments so we can assume we should only mark the default ctor
+			var ctor = creationType.GetDefaultConstructor ();
+			if (ctor == null)
+				return false;
+
+			_context.Tracer.Push ($"Reflection-ActivatorUsage {ctor}");
+			try {
+				MarkMethod (ctor);
+			} finally {
+				_context.Tracer.Pop ();
+			}
+			return true;
+		}
+
+		bool MarkCreateInstanceWithStringString (MethodBody callingBody, MethodReference method, Instruction callInstruction)
+		{
+//			if (MarkCreationTypeOfCreateInstanceWithStringString (callingBody, method, callInstruction))
+//				return;
+//
+//			if (MarkCastTypeOfCreateInstanceWithStringString (callingBody, method, callInstruction))
+//				return;
+//
+//			UnhandledActivatorCreateInstanceUsage (callingBody, method, callInstruction);
+			return false;
 		}
 
 		void MarkSomethingUsedViaReflection (string reflectionMethod, Action<Collection<Instruction>, string, TypeDefinition, BindingFlags> markMethod, Collection<Instruction> instructions)
