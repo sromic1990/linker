@@ -1,4 +1,4 @@
-﻿//
+//
 // SweepStep.cs
 //
 // Author:
@@ -301,7 +301,7 @@ namespace Mono.Linker.Steps {
 			if (!type.IsClass)
 				return;
 
-			if (type.BaseType == type.Module.TypeSystem.Object)
+			if (type.BaseType != null && type.BaseType.FullName == "System.Object")
 				return;
 
 			if (Annotations.IsBaseRequired (type))
