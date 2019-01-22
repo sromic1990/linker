@@ -268,6 +268,8 @@ namespace Mono.Linker.Steps {
 			if (!Annotations.IsInstantiated (method.DeclaringType) && !Annotations.IsBaseRequired (method.DeclaringType))
 				return;
 
+			// TODO by Mike : This causes issues with System.Delegate which is created from native side and we don't get a .ctor marked.
+			// This optimization probably isn't worth the effort and headache.  Remove it
 			// If the type is not instantiated, but it's base type is required for some reason, we can still skip marking of the override if the base method
 			// is not abstract
 			if (!Annotations.IsInstantiated (method.DeclaringType) && Annotations.IsBaseRequired (method.DeclaringType) && !@base.IsAbstract)
