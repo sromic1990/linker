@@ -1872,19 +1872,27 @@ namespace Mono.Linker.Steps {
 			}
 		}
 
-		/// <summary>
-		/// Figuring out the visibility rules when nested classes are involved gets very complicated
-		/// and is likely not worth the effort to implement.  Instead of trying to implement that, this method is here to
-		/// mark the base type required in any situations we are not going to try and detect
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		bool MarkBaseTypeRequiredForCasesThatAreNotSupported (TypeDefinition type)
+		bool MarkBaseTypeRequiredIfNecessary (TypeDefinition type)
 		{
 			if (!type.IsClass || type.BaseType == null)
 				return false;
+			
+			var bases = Annotations.GetBaseHierarchy(type);
 
-			foreach (var @base in Annotations.GetBaseHierarchy (type)) {
+			// Don't mess with attributes types.  Seems like asking for trouble since reflection is often used with attributes
+			// which means we likely cannot detect how the attributes are being used
+			if (bases.Any (t => t.FullName == "System.Attribute")) {
+				MarkBaseHierarchyAsRequired (type);
+				return true;
+			}
+
+			//
+			//Figuring out the visibility rules when nested classes are involved gets very complicated
+			// and is likely not worth the effort to implement.  Instead of trying to implement that, this method is here to
+			// mark the base type required in any situations we are not going to try and detect
+			//
+
+			foreach (var @base in bases) {
 				if (@base.HasNestedTypes) {
 					MarkBaseHierarchyAsRequired (type);
 					return true;
