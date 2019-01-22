@@ -2130,8 +2130,10 @@ namespace Mono.Linker.Steps {
 
 		protected virtual void MarkMethodBody (MethodBody body)
 		{
-			foreach (VariableDefinition var in body.Variables)
+			foreach (VariableDefinition var in body.Variables) {
 				MarkType (var.VariableType);
+				MarkBaseHierarchyAsRequired (var.VariableType);
+			}
 
 			foreach (ExceptionHandler eh in body.ExceptionHandlers)
 				if (eh.HandlerType == ExceptionHandlerType.Catch)
