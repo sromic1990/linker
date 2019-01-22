@@ -1767,6 +1767,15 @@ namespace Mono.Linker.Steps {
 		{
 		}
 
+		void MarkBaseHierarchyAsRequired (TypeReference type)
+		{
+			var resolved = type.Resolve ();
+			if (resolved == null)
+				return;
+
+			MarkBaseHierarchyAsRequired (resolved);
+		}
+
 		void MarkBaseHierarchyAsRequired (TypeDefinition type)
 		{
 			_baseTypeHierarchyMarked.Add (type);
@@ -1929,6 +1938,11 @@ namespace Mono.Linker.Steps {
 					MarkBaseRequirementsFromBody (fieldReference, body);
 				} else if (instruction.Operand is MethodReference methodReference) {
 					MarkBaseRequirementsFromBody(methodReference, body);
+				} else if (instruction.OpCode.Code == Code.Castclass || instruction.OpCode.Code == Code.Isinst) {
+					var typeReference = (instruction.Operand as TypeReference);
+					if (typeReference == null)
+						continue;
+					MarkBaseHierarchyAsRequired(typeReference);
 				}
 			}
 		}

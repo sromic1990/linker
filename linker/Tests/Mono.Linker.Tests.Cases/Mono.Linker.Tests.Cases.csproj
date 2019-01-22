@@ -179,6 +179,11 @@
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\AbstractBaseCanBeRemovedFromClassWithOnlyStaticMethodUsedWithCctor.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\AttributeWithStaticMethodOnlyUsed.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\AttributeWithStaticMethodOnlyUsed2.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Explicit\SoftUpcastAndCallMember.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Explicit\SoftUpcast.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Explicit\HardUpcast.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Explicit\HardUpcast2.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Explicit\SoftUpcast2.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\ClassDerivedFromObject.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Dependencies\UseInternalStaticMethodFromBaseTypeInOtherAssembly_Lib.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Generics.Constraints\ClassConstraintOnMethod.cs" />
