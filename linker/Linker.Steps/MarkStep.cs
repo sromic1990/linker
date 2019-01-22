@@ -1926,10 +1926,6 @@ namespace Mono.Linker.Steps {
 			// We do not currently change the base type of value types
 			if (type.IsValueType)
 				return;
-			
-			// No need to do this for types derived from object.  It already has the lowest base class
-			if (type.BaseType == null || type.BaseType.Resolve ()?.BaseType == null)
-				return;
 
 			foreach (var instruction in body.Instructions) {
 				if (instruction.Operand == null)
