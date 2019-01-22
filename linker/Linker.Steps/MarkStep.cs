@@ -992,7 +992,7 @@ namespace Mono.Linker.Steps {
 				MarkRequirementsForInstantiatedTypes (type);
 			}
 
-			MarkBaseTypeRequiredForCasesThatAreNotSupported (type);
+			MarkBaseTypeRequiredIfNecessary (type);
 
 			if (type.HasInterfaces)
 				_typesWithInterfaces.Add (type);
@@ -1912,7 +1912,7 @@ namespace Mono.Linker.Steps {
 			}
 
 			if (type.DeclaringType != null) {
-				if (MarkBaseTypeRequiredForCasesThatAreNotSupported (type.DeclaringType)) {
+				if (MarkBaseTypeRequiredIfNecessary (type.DeclaringType)) {
 					MarkBaseHierarchyAsRequired (type);
 					return true;
 				}
