@@ -1744,6 +1744,7 @@ namespace Mono.Linker.Steps {
 			MarkBaseMethods (method);
 
 			MarkType (method.ReturnType);
+			MarkBaseHierarchyAsRequired (method.ReturnType);
 			MarkCustomAttributes (method.MethodReturnType);
 			MarkMarshalSpec (method.MethodReturnType);
 
