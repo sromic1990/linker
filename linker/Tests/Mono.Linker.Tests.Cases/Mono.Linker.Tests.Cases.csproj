@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -184,6 +184,15 @@
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Explicit\HardUpcast.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Explicit\HardUpcast2.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Explicit\SoftUpcast2.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Implicit\BaseAndDerivedUsedAsParameters.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Implicit\LocalPassedToMethodAsBase.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Implicit\LocalPassedToMethodAsBase2.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Implicit\OutParameterDownCastedToBaseAndPassedToMethod.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Implicit\RefParameterDownCastedToBaseAndPassedToMethod.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Implicit\ReturnTypeDownCastedToObjectAndPassedToMethod.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Implicit\ReturnTypeDownCastedToBaseAndPassedToMethod.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Implicit\ReturnTypeStoredInField.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Casting.Implicit\ReturnTypeStoredInLocal.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\ClassDerivedFromObject.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Dependencies\UseInternalStaticMethodFromBaseTypeInOtherAssembly_Lib.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\Generics.Constraints\ClassConstraintOnMethod.cs" />
