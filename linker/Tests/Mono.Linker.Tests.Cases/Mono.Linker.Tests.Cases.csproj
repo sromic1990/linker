@@ -297,6 +297,7 @@
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoInstanceCtor\NoInstanceCtorAndTypePreserveNone.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\ComInterfaceTypeRemovedWhenOnlyUsedByClassWithOnlyStaticMethod.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\ExplicitInterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsed.cs" />
+    <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\ExplicitInterfaceOnTypeWithBaseCanBeRemoved.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsed.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceCanBeRemovedFromClassWithOnlyStaticMethodUsedWithCctor.cs" />
     <Compile Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\InterfaceFromCopiedAssemblyCanBeRemoved.cs" />
