@@ -990,6 +990,8 @@ namespace Mono.Linker.Steps {
 				//    and there are no other usages of that interface type, then we need to make sure the interface type is still marked because
 				//    this type is going to retain the interface implementation
 				MarkRequirementsForInstantiatedTypes (type);
+			} else if (AlwaysMarkTypeAsInstantiated (type)) {
+				MarkRequirementsForInstantiatedTypes (type);
 			}
 
 			MarkBaseTypeRequiredIfNecessary (type);
@@ -1409,6 +1411,20 @@ namespace Mono.Linker.Steps {
 		static bool IsMulticastDelegate (TypeDefinition td)
 		{
 			return td.BaseType != null && td.BaseType.FullName == "System.MulticastDelegate";
+		}
+
+		protected virtual bool AlwaysMarkTypeAsInstantiated (TypeDefinition td)
+		{
+			switch (td.FullName) {
+			// These types are created from native code which means we are unable to track when they are instantiated
+			// Since these are such foundational types, let's take the easy route and just always assume an instance of one of these
+			// could exist
+			case "System.Delegate":
+			case "System.MulticastDelegate":
+				return true;
+			}
+
+			return false;
 		}
 
 		void MarkEventSourceProviders (TypeDefinition td)
