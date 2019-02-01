@@ -264,15 +264,22 @@ namespace Mono.Linker.Steps {
 			if (Annotations.IsMarked (method))
 				return;
 
-			// We don't need to mark overrides until it is possible that the type could be instantiated
-			if (!Annotations.IsInstantiated (method.DeclaringType) && !Annotations.IsBaseRequired (method.DeclaringType))
+			var isInstantiated = Annotations.IsInstantiated (method.DeclaringType);
+			var isBaseRequired = Annotations.IsBaseRequired (method.DeclaringType);
+
+			// We don't need to mark overrides interfaces until it is possible that the type could be instantiated
+			// if the type is not instantiated, interfaces will be removed so there is no need to mark interface methods
+			if (!isInstantiated && @base.DeclaringType.IsInterface)
 				return;
 
-			// TODO by Mike : This causes issues with System.Delegate which is created from native side and we don't get a .ctor marked.
-			// This optimization probably isn't worth the effort and headache.  Remove it
+			// We don't need to mark overrides until it is possible that the type could be instantiated
+			if (!isInstantiated && !isBaseRequired)
+				return;
+
+			// TODO by Mike : Pull out into separate PR
 			// If the type is not instantiated, but it's base type is required for some reason, we can still skip marking of the override if the base method
 			// is not abstract
-			if (!Annotations.IsInstantiated (method.DeclaringType) && Annotations.IsBaseRequired (method.DeclaringType) && !@base.IsAbstract)
+			if (!isInstantiated && isBaseRequired && !@base.IsAbstract)
 				return;
 
 			MarkMethod (method);
