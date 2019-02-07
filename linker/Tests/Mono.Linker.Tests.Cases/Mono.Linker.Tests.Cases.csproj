@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -153,6 +153,8 @@
     <Compile Include="Basic\InterfaceMethodImplementedOnBaseClassDoesNotGetStripped.cs" />
     <Compile Include="Basic\MultiLevelNestedClassesAllRemovedWhenNonUsed.cs" />
     <Compile Include="Basic\NestedDelegateInvokeMethodsPreserved.cs" />
+    <Compile Include="Basic\InstantiatedTypeWithOverridesFromObject.cs" />
+    <Compile Include="Basic\NeverInstantiatedTypeWithOverridesFromObject.cs" />
     <Compile Include="Basic\UninvokedInterfaceMemberGetsRemoved.cs" />
     <Compile Include="Basic\UnusedDelegateGetsRemoved.cs" />
     <Compile Include="Basic\UnusedEnumGetsRemoved.cs" />
@@ -171,9 +173,12 @@
     <Compile Include="Basic\UsedStructIsKept.cs" />
     <Compile Include="BCLFeatures\ETW\LocalsOfModifiedMethodAreRemoved.cs" />
     <Compile Include="BCLFeatures\ETW\StubbedMethodWithExceptionHandlers.cs" />
+    <Compile Include="CommandLine\ResponseFilesWork.cs" />
     <Compile Include="CoreLink\CanIncludeI18nAssemblies.cs" />
     <Compile Include="CoreLink\DelegateAndMulticastDelegateKeepInstantiatedReqs.cs" />
+    <Compile Include="CoreLink\NeverInstantiatedTypeWithOverridesFromObject.cs" />
     <Compile Include="CoreLink\NoSecurityPlusOnlyKeepUsedRemovesAllSecurityAttributesFromCoreLibraries.cs" />
+    <Compile Include="CoreLink\InstantiatedTypeWithOverridesFromObject.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedAbstractMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedVirtualMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfAbstractMethodIsKept.cs" />
@@ -353,7 +358,7 @@
     <Compile Include="Symbols\ReferenceWithMdbDeleteActionAndSymbolLinkingEnabled.cs" />
     <Compile Include="Symbols\ReferenceWithPdb.cs" />
     <Compile Include="Symbols\ReferenceWithPdbAndSymbolLinkingEnabled.cs" />
-    <Compile Include="Symbols\AssemlbyWithDefaultSymbolsAndSymbolLinkingEnabled.cs" />
+    <Compile Include="Symbols\AssemblyWithDefaultSymbolsAndSymbolLinkingEnabled.cs" />
     <Compile Include="Symbols\AssemblyWithDefaultSymbols.cs" />
     <Compile Include="Symbols\Dependencies\LibraryWithCompilerDefaultSymbols.cs" />
     <Compile Include="Symbols\Dependencies\LibraryWithPdb\LibraryWithPdb.cs" />
@@ -486,6 +491,7 @@
   <ItemGroup>
     <Content Include="Attributes\OnlyKeepUsed\Dependencies\AssemblyWithUnusedAttributeOnReturnParameterDefinition.il" />
     <Content Include="Attributes\OnlyKeepUsed\UnusedAttributePreservedViaLinkXmlIsKept.xml" />
+    <Content Include="CommandLine\Dependencies\ResponseFilesWork.rsp" />
     <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeHasExplicitInterfaceMethodPreservedViaXml.xml" />
     <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeHasExplicitInterfacePropertyPreservedViaXml.xml" />
     <Content Include="Inheritance.Interfaces\OnReferenceType\NoKeptCtor\UnusedTypeHasInterfaceMethodPreservedViaXml.xml" />
