@@ -52,6 +52,7 @@
     <Compile Include="Assertions\KeptAttributeInAssemblyAttribute.cs" />
     <Compile Include="Assertions\KeptAttributeOnFixedBufferTypeAttribute.cs" />
     <Compile Include="Assertions\KeptBackingFieldAttribute.cs" />
+    <Compile Include="Assertions\KeptBaseOnTypeInAssemblyAttribute.cs" />
     <Compile Include="Assertions\KeptDelegateCacheFieldAttribute.cs" />
     <Compile Include="Assertions\KeptEventAddMethodAttribute.cs" />
     <Compile Include="Assertions\KeptEventRemoveMethodAttribute.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Assertions\KeptMemberAttribute.cs" />
     <Compile Include="Assertions\KeptMemberInAssemblyAttribute.cs" />
     <Compile Include="Assertions\KeptReferenceAttribute.cs" />
+    <Compile Include="Assertions\KeptReferencesInAssemblyAttribute.cs" />
     <Compile Include="Assertions\KeptResourceAttribute.cs" />
     <Compile Include="Assertions\KeptResourceInAssemblyAttribute.cs" />
     <Compile Include="Assertions\KeptSecurityAttribute.cs" />

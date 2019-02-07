@@ -227,6 +227,11 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 
 								VerifyRemovedMemberInAssembly (checkAttrInAssembly, linkedType);
 								break;
+							case nameof (KeptBaseOnTypeInAssemblyAttribute):
+								if (linkedType == null)
+									Assert.Fail ($"Type `{expectedTypeName}' should have been kept");
+								VerifyKeptBaseOnTypeInAssembly (checkAttrInAssembly, linkedType);
+								break;
 							case nameof (KeptMemberInAssemblyAttribute):
 								if (linkedType == null)
 									Assert.Fail ($"Type `{expectedTypeName}' should have been kept");
@@ -243,6 +248,9 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 								break;
 							case nameof (RemovedResourceInAssemblyAttribute):
 								VerifyRemovedResourceInAssembly (checkAttrInAssembly);
+								break;
+							case nameof (KeptReferencesInAssemblyAttribute):
+								VerifyKeptReferencesInAssembly (checkAttrInAssembly);
 								break;
 							default:
 								UnhandledOtherAssemblyAssertion (expectedTypeName, checkAttrInAssembly, linkedType);
@@ -390,6 +398,21 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 				Assert.Fail ($"Expected `{linkedType}` to have interface of type {originalInterface.FullName}");
 		}
 
+		void VerifyKeptBaseOnTypeInAssembly (CustomAttribute inAssemblyAttribute, TypeDefinition linkedType)
+		{
+			var originalType = GetOriginalTypeFromInAssemblyAttribute (inAssemblyAttribute);
+			
+			var baseAssemblyName = inAssemblyAttribute.ConstructorArguments [2].Value.ToString ();
+			var baseType = inAssemblyAttribute.ConstructorArguments [3].Value;
+
+			var originalBase = GetOriginalTypeFromInAssemblyAttribute (baseAssemblyName, baseType);
+			if (originalType.BaseType.Resolve () != originalBase)
+				Assert.Fail ("Invalid assertion.  Original type's base does not match the expected base");
+
+			Assert.That (originalBase.FullName, Is.EqualTo (linkedType.BaseType.FullName),
+				$"Incorrect base on `{linkedType.FullName}`.  Expected `{originalBase.FullName}` but was `{linkedType.BaseType.FullName}`");
+		}
+
 		protected static InterfaceImplementation GetMatchingInterfaceImplementationOnType (TypeDefinition type, string expectedInterfaceTypeName)
 		{
 			return type.Interfaces.FirstOrDefault (impl =>
@@ -504,6 +527,13 @@ namespace Mono.Linker.Tests.TestCasesRunner {
 			}
 
 			return false;
+		}
+
+		void VerifyKeptReferencesInAssembly (CustomAttribute inAssemblyAttribute)
+		{
+			var assembly = ResolveLinkedAssembly (inAssemblyAttribute.ConstructorArguments [0].Value.ToString ());
+			var expectedReferenceNames = ((CustomAttributeArgument []) inAssemblyAttribute.ConstructorArguments [1].Value).Select (attr => (string) attr.Value);
+			Assert.That (assembly.MainModule.AssemblyReferences.Select (asm => asm.Name), Is.EquivalentTo (expectedReferenceNames));
 		}
 
 		void VerifyKeptResourceInAssembly (CustomAttribute inAssemblyAttribute)

@@ -158,6 +158,7 @@
     <Compile Include="Basic\UnusedEnumGetsRemoved.cs" />
     <Compile Include="Basic\UnusedEventGetsRemoved.cs" />
     <Compile Include="Basic\InitializerForArrayIsKept.cs" />
+    <Compile Include="Basic\UnusedFieldsOfStructsAreKept.cs" />
     <Compile Include="Basic\UsedEnumIsKept.cs" />
     <Compile Include="Basic\UsedEventOnInterfaceIsKept.cs" />
     <Compile Include="Basic\UnusedFieldGetsRemoved.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="BCLFeatures\ETW\LocalsOfModifiedMethodAreRemoved.cs" />
     <Compile Include="BCLFeatures\ETW\StubbedMethodWithExceptionHandlers.cs" />
     <Compile Include="CoreLink\CanIncludeI18nAssemblies.cs" />
+    <Compile Include="CoreLink\DelegateAndMulticastDelegateKeepInstantiatedReqs.cs" />
     <Compile Include="CoreLink\NoSecurityPlusOnlyKeepUsedRemovesAllSecurityAttributesFromCoreLibraries.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedAbstractMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedVirtualMethodRemoved.cs" />
@@ -297,6 +299,10 @@
     <Compile Include="PreserveDependencies\PreserveDependencyOnUnusedMethodInNonReferencedAssembly.cs" />
     <Compile Include="PreserveDependencies\PreserveDependencyOnUnusedMethodInNonReferencedAssemblyWithCopyUsedAction.cs" />
     <Compile Include="PreserveDependencies\PreserveDependencyOnUnusedMethodInNonReferencedAssemblyWithEmbeddedXml.cs" />
+    <Compile Include="References\AssemblyOnlyUsedByUsingWithCsc.cs" />
+    <Compile Include="References\AssemblyOnlyUsedByUsingWithMcs.cs" />
+    <Compile Include="References\Dependencies\AssemblyOnlyUsedByUsing_Copied.cs" />
+    <Compile Include="References\Dependencies\AssemblyOnlyUsedByUsing_Lib.cs" />
     <Compile Include="References\Individual\CanSkipUnresolved.cs" />
     <Compile Include="References\Individual\Dependencies\CanSkipUnresolved_Library.cs" />
     <Compile Include="References\Dependencies\UserAssembliesAreLinkedByDefault_Library1.cs" />
