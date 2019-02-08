@@ -259,17 +259,13 @@ namespace Mono.Linker.Steps {
 
 		void ProcessPendingBodies ()
 		{
-			var bodiesToRemove = new List<int> ();
 			for (int i = 0; i < _pendingBodies.Count; i++) {
 				var body = _pendingBodies [i];
 				if (Annotations.IsInstantiated (body.Method.DeclaringType)) {
 					MarkMethodBody (body);
-					bodiesToRemove.Add (i);
+					_pendingBodies.RemoveAt (i--);
 				}
 			}
-			
-			foreach (var index in bodiesToRemove)
-				_pendingBodies.RemoveAt (index);
 		}
 
 		void ProcessVirtualMethod (MethodDefinition method)
