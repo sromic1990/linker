@@ -191,6 +191,9 @@
     <Compile Include="Inheritance.AbstractClasses\UnusedVirtualMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfAbstractMethodIsKept.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfVirtualMethodIsKept.cs" />
+    <Compile Include="Inheritance.Complex\NoKeptCtor\OverrideOfAbstractAndInterfaceMethodCalledFromLocal.cs" />
+    <Compile Include="Inheritance.Complex\NoKeptCtor\OverrideOfAbstractAndInterfaceMethodCalledFromLocal2.cs" />
+    <Compile Include="Inheritance.Complex\NoKeptCtor\OverrideOfAbstractAndInterfaceMethodCalledFromLocal3.cs" />
     <Compile Include="Inheritance.Complex\NoKeptCtor\OverrideStubbing\OverrideOfAbstractIsStubbedWithUnusedInterface.cs" />
     <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceTypeInOtherUsedOnlyByCopiedAssemblyExplicit_Copy.cs" />
     <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceTypeInOtherUsedOnlyByCopiedAssemblyExplicit_Link.cs" />
