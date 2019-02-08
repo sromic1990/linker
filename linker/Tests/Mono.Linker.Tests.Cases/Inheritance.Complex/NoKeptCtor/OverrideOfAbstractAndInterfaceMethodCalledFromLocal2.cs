@@ -4,8 +4,8 @@ namespace Mono.Linker.Tests.Cases.Inheritance.Complex.NoKeptCtor {
 	public class OverrideOfAbstractAndInterfaceMethodCalledFromLocal2 {
 		public static void Main ()
 		{
-			Foo b = HelperToMarkFooAndRequireBase ();
-			b.Method ();
+			Foo f = HelperToMarkFooAndRequireBase ();
+			f.Method ();
 			IBar i = GetAnIBar ();
 			i.Method ();
 		}
@@ -17,7 +17,7 @@ namespace Mono.Linker.Tests.Cases.Inheritance.Complex.NoKeptCtor {
 		}
 
 		[Kept]
-		static IBar GetAnIBar()
+		static IBar GetAnIBar ()
 		{
 			return null;
 		}
@@ -32,12 +32,12 @@ namespace Mono.Linker.Tests.Cases.Inheritance.Complex.NoKeptCtor {
 		[KeptBaseType (typeof (Base))]
 		class Foo : Base, IBar {
 			[Kept]
+			[ExpectBodyModified]
 			public override void Method ()
 			{
 				UsedByOverride ();
 			}
 
-			[Kept]
 			void UsedByOverride ()
 			{
 			}
