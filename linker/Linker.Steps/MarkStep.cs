@@ -990,6 +990,7 @@ namespace Mono.Linker.Steps {
 				_typesWithInterfaces.Add (type);
 
 			if (type.HasMethods) {
+				MarkMethodsIf (type.Methods, IsVirtualNeededByTypeDueToPreservedScope);
 				if (ShouldMarkTypeStaticConstructor (type))
 					MarkStaticConstructor (type);
 
@@ -1301,7 +1302,38 @@ namespace Mono.Linker.Steps {
 				MarkType (constraint);
 		}
 
-		bool IsVirtualAndHasPreservedParent (MethodDefinition method)
+		bool IsVirtualNeededByTypeDueToPreservedScope (MethodDefinition method)
+		{
+			if (!method.IsVirtual)
+				return false;
+
+			var base_list = Annotations.GetBaseMethods (method);
+			if (base_list == null)
+				return false;
+
+			foreach (MethodDefinition @base in base_list) {
+				// Just because the type is marked does not mean we need interface methods.
+				// if the type is never instantiated, interfaces will be removed
+				if (@base.DeclaringType.IsInterface)
+					continue;
+				
+				// If the type is marked, we need to keep overrides of abstract members defined in assemblies
+				// that are copied.  However, if the base method is virtual, then we don't need to keep the override
+				// until the type could be instantiated
+				if (!@base.IsAbstract)
+					continue;
+
+				if (IgnoreScope (@base.DeclaringType.Scope))
+					return true;
+
+				if (IsVirtualNeededByTypeDueToPreservedScope (@base))
+					return true;
+			}
+
+			return false;
+		}
+		
+		bool IsVirtualNeededByInstantiatedTypeDueToPreservedScope (MethodDefinition method)
 		{
 			if (!method.IsVirtual)
 				return false;
@@ -1314,7 +1346,7 @@ namespace Mono.Linker.Steps {
 				if (IgnoreScope (@base.DeclaringType.Scope))
 					return true;
 
-				if (IsVirtualAndHasPreservedParent (@base))
+				if (IsVirtualNeededByTypeDueToPreservedScope (@base))
 					return true;
 			}
 
@@ -1794,7 +1826,7 @@ namespace Mono.Linker.Steps {
 			foreach (var method in type.Methods) {
 				if (method.IsFinalizer ())
 					MarkMethod (method);
-				else if (IsVirtualAndHasPreservedParent (method))
+				else if (IsVirtualNeededByInstantiatedTypeDueToPreservedScope (method))
 					MarkMethod (method);
 			}
 

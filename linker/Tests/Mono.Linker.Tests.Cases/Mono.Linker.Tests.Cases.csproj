@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -179,6 +179,23 @@
     <Compile Include="CoreLink\NeverInstantiatedTypeWithOverridesFromObject.cs" />
     <Compile Include="CoreLink\NoSecurityPlusOnlyKeepUsedRemovesAllSecurityAttributesFromCoreLibraries.cs" />
     <Compile Include="CoreLink\InstantiatedTypeWithOverridesFromObject.cs" />
+    <Compile Include="Inheritance.AbstractClasses\Dependencies\TypeWithBaseInCopiedAssembly2_Base.cs" />
+    <Compile Include="Inheritance.AbstractClasses\Dependencies\TypeWithBaseInCopiedAssembly3_Base.cs" />
+    <Compile Include="Inheritance.AbstractClasses\Dependencies\TypeWithBaseInCopiedAssembly4_Base.cs" />
+    <Compile Include="Inheritance.AbstractClasses\Dependencies\TypeWithBaseInCopiedAssembly6_Base.cs" />
+    <Compile Include="Inheritance.AbstractClasses\Dependencies\TypeWithBaseInCopiedAssembly_Base.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NotKeptCtor\NeverInstantiatedTypeWithBaseInCopiedAssembly.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NotKeptCtor\NeverInstantiatedTypeWithBaseInCopiedAssembly2.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NotKeptCtor\NeverInstantiatedTypeWithBaseInCopiedAssembly3.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NotKeptCtor\NeverInstantiatedTypeWithBaseInCopiedAssembly4.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NotKeptCtor\NeverInstantiatedTypeWithBaseInCopiedAssembly5.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NotKeptCtor\NeverInstantiatedTypeWithBaseInCopiedAssembly6.cs" />
+    <Compile Include="Inheritance.AbstractClasses\TypeWithBaseInCopiedAssembly.cs" />
+    <Compile Include="Inheritance.AbstractClasses\TypeWithBaseInCopiedAssembly2.cs" />
+    <Compile Include="Inheritance.AbstractClasses\TypeWithBaseInCopiedAssembly3.cs" />
+    <Compile Include="Inheritance.AbstractClasses\TypeWithBaseInCopiedAssembly4.cs" />
+    <Compile Include="Inheritance.AbstractClasses\TypeWithBaseInCopiedAssembly5.cs" />
+    <Compile Include="Inheritance.AbstractClasses\TypeWithBaseInCopiedAssembly6.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedAbstractMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UnusedVirtualMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfAbstractMethodIsKept.cs" />
@@ -249,7 +266,10 @@
     <Compile Include="Inheritance.Interfaces\OnValueType\UnusedExplicitInterfaceIsRemoved.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\UnusedInterfaceHasMethodPreservedViaXml.cs" />
     <Compile Include="Inheritance.Interfaces\OnValueType\UnusedInterfaceTypeIsRemoved.cs" />
+    <Compile Include="Inheritance.VirtualMethods\Dependencies\TypeWithBaseInCopiedAssembly_Base.cs" />
     <Compile Include="Inheritance.VirtualMethods\HarderToDetectUnusedVirtualMethodGetsRemoved.cs" />
+    <Compile Include="Inheritance.VirtualMethods\NotKeptCtor\NeverInstantiatedTypeWithBaseInCopiedAssembly.cs" />
+    <Compile Include="Inheritance.VirtualMethods\TypeWithBaseInCopiedAssembly.cs" />
     <Compile Include="Inheritance.VirtualMethods\UnusedTypeWithOverrideOfVirtualMethodIsRemoved.cs" />
     <Compile Include="Inheritance.VirtualMethods\UnusedVirtualMethodRemoved.cs" />
     <Compile Include="Inheritance.VirtualMethods\UsedOverrideOfVirtualMethodIsKept.cs" />
