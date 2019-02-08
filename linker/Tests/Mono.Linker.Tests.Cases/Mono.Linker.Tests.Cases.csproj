@@ -178,6 +178,7 @@
     <Compile Include="CoreLink\DelegateAndMulticastDelegateKeepInstantiatedReqs.cs" />
     <Compile Include="CoreLink\NeverInstantiatedTypeWithOverridesFromObject.cs" />
     <Compile Include="CoreLink\NoSecurityPlusOnlyKeepUsedRemovesAllSecurityAttributesFromCoreLibraries.cs" />
+    <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\OverrideStubbing\OverrideOfAbstractIsStubbed.cs" />
     <Compile Include="CoreLink\InstantiatedTypeWithOverridesFromObject.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\OverrideRemoval\OverrideOfAbstractIsKept.cs" />
     <Compile Include="Inheritance.AbstractClasses\NoKeptCtor\OverrideRemoval\OverrideOfVirtualCanBeRemoved.cs" />
