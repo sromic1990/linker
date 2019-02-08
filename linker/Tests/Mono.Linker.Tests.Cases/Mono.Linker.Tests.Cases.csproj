@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -191,6 +191,7 @@
     <Compile Include="Inheritance.AbstractClasses\UnusedVirtualMethodRemoved.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfAbstractMethodIsKept.cs" />
     <Compile Include="Inheritance.AbstractClasses\UsedOverrideOfVirtualMethodIsKept.cs" />
+    <Compile Include="Inheritance.Complex\NoKeptCtor\OverrideStubbing\OverrideOfAbstractIsStubbedWithUnusedInterface.cs" />
     <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceTypeInOtherUsedOnlyByCopiedAssemblyExplicit_Copy.cs" />
     <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceTypeInOtherUsedOnlyByCopiedAssemblyExplicit_Link.cs" />
     <Compile Include="Inheritance.Interfaces\Dependencies\InterfaceTypeInOtherUsedOnlyByCopiedAssembly_Copy.cs" />
@@ -585,7 +586,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes.StructLayout\" />
-    <Folder Include="Inheritance.Complex" />
     <Folder Include="Reflection\Dependencies\" />
     <Folder Include="BCLFeatures\" />
     <Folder Include="BCLFeatures\ETW\" />
