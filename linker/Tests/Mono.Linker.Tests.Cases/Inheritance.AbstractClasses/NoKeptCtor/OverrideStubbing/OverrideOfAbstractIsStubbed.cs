@@ -25,7 +25,7 @@ namespace Mono.Linker.Tests.Cases.Inheritance.AbstractClasses.NoKeptCtor.Overrid
 		[KeptBaseType (typeof (Base))]
 		class Foo : Base {
 			[Kept]
-			[ExpectedInstructionSequence(new []
+			[ExpectedInstructionSequence (new []
 			{
 				"ldstr",
 				"newobj",
