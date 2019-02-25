@@ -26,8 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Mono.Cecil;
 
 namespace Mono.Linker.Steps {
@@ -73,22 +74,101 @@ namespace Mono.Linker.Steps {
 			if (!type.HasInterfaces)
 				return;
 
-			foreach (var @interface in type.Interfaces) {
-				var iface = @interface.InterfaceType.Resolve ();
+			foreach (var @interface in type.Interfaces)
+			{
+				var interfaceType = @interface.InterfaceType;
+				var iface =interfaceType.Resolve ();
 				if (iface == null || !iface.HasMethods)
 					continue;
 
-				foreach (MethodDefinition method in iface.Methods) {
-					if (TryMatchMethod (type, method) != null)
+				foreach (MethodDefinition interfaceMethod in iface.Methods) {
+					if(interfaceMethod.FullName.Contains("Mono.Linker") && interfaceMethod.Name.Contains("Method"))
+						Console.WriteLine();
+					
+					if (TryMatchMethod (type, interfaceMethod) != null)
 						continue;
 
-					var @base = GetBaseMethodInTypeHierarchy (type, method);
-					if (@base == null)
-						continue;
+					var @base = GetBaseMethodInTypeHierarchy (type, interfaceMethod);
+					if (@base != null)
+						AnnotateMethods (interfaceMethod, @base);
+					
+					if(interfaceMethod.FullName.Contains("Mono.Linker") && interfaceMethod.Name.Contains("Method"))
+						Console.WriteLine();
 
-					AnnotateMethods (method, @base);
+					if (interfaceType is GenericInstanceType genericInterfaceInstance && !genericInterfaceInstance.ContainsGenericParameter)
+					{
+						var genericContext = new Inflater.GenericContext(genericInterfaceInstance, null);
+//						var inflatedCandidateMethod = Inflater.InflateMethod(genericContext, type, interfaceMethod);
+//						var resolvedCandidate = inflatedCandidateMethod.Resolve();
+//						// The candidate method doesn't really exist.
+//						if (resolvedCandidate != null)
+//						{
+//							if (MethodMatch(resolvedCandidate, interfaceMethod))
+//							{
+//								AnnotateMethods (interfaceMethod, resolvedCandidate);
+//							}
+//						}
+//						
+//						var candidateMatch = TryMatchMethod(type, in)
+
+
+
+						var baseInflated = GetBaseInflatedInterfaceMethodInTypeHierarchy(genericContext, type, interfaceMethod);
+						if (baseInflated != null)
+						{
+							Annotations.AddOverride(interfaceMethod, baseInflated);
+//							Annotations.AddBaseMethod (baseInflated, interfaceMethod);
+//							AnnotateMethods (interfaceMethod, baseInflated);
+						}
+					}
+
+
+//					foreach (var inflatedMethod in GetBaseMethodsInInterfaceHierarchy(type, method))
+//					{
+//						AnnotateMethods (inflatedMethod, @base);
+//					}
 				}
 			}
+		}
+
+		static MethodReference CreateNonGenericCandidate(Inflater.GenericContext context, TypeDefinition candidateType, MethodDefinition interfaceMethod)
+		{
+			var methodReference = new MethodReference(interfaceMethod.Name, interfaceMethod.ReturnType, candidateType) {HasThis = interfaceMethod.HasThis};
+			
+			foreach (var p in interfaceMethod.Parameters)
+			{
+				if(interfaceMethod.FullName.Contains("Mono.Linker") && interfaceMethod.Name.Contains("Method"))
+					Console.WriteLine();
+				
+				if (p.ParameterType.IsGenericParameter)
+					methodReference.Parameters.Add(new ParameterDefinition(p.Name, p.Attributes, Inflater.InflateType(context, p.ParameterType)));
+				else
+					methodReference.Parameters.Add(new ParameterDefinition(p.Name, p.Attributes, p.ParameterType));
+			}
+
+			return methodReference;
+		}
+
+		static MethodDefinition GetBaseInflatedInterfaceMethodInTypeHierarchy (Inflater.GenericContext context, TypeDefinition type, MethodDefinition interfaceMethod)
+		{
+			TypeReference @base = type.GetInflatedBaseType ();
+			while (@base != null)
+			{
+				var candidate = CreateNonGenericCandidate(context, @base.Resolve(), interfaceMethod);
+
+//				var inflatedInterfaceMethod = Inflater.InflateMethod(context, @base.Resolve(), interfaceMethod);
+				
+				if(interfaceMethod.FullName.Contains("Mono.Linker") && interfaceMethod.Name.Contains("Method"))
+					Console.WriteLine();
+				
+				MethodDefinition base_method = TryMatchMethod (@base, candidate);
+				if (base_method != null)
+					return base_method;
+
+				@base = @base.GetInflatedBaseType ();
+			}
+
+			return null;
 		}
 
 		void MapVirtualMethods (TypeDefinition type)
@@ -205,7 +285,7 @@ namespace Mono.Linker.Steps {
 			}
 		}
 
-		static MethodDefinition TryMatchMethod (TypeReference type, MethodDefinition method)
+		static MethodDefinition TryMatchMethod (TypeReference type, MethodReference method)
 		{
 			foreach (var candidate in type.GetMethods ()) {
 				if (MethodMatch (candidate, method))
@@ -214,8 +294,48 @@ namespace Mono.Linker.Steps {
 
 			return null;
 		}
+		
+//		static bool MethodInflatedMatch (MethodReference candidate, MethodReference method)
+//		{
+//			var candidateDef = candidate.Resolve ();
+//
+//			if (!candidateDef.IsVirtual)
+//				return false;
+//
+//			if (candidate.HasParameters != method.HasParameters)
+//				return false;
+//
+//			if (candidate.Name != method.Name)
+//				return false;
+//
+//			if (candidate.HasGenericParameters != method.HasGenericParameters)
+//				return false;
+//
+//			// we need to track what the generic parameter represent - as we cannot allow it to
+//			// differ between the return type or any parameter
+//			if (!TypeMatch (candidate.GetReturnType (), method.GetReturnType ()))
+//				return false;
+//
+//			if (!candidate.HasParameters)
+//				return true;
+//
+//			var cp = candidate.Parameters;
+//			var mp = method.Parameters;
+//			if (cp.Count != mp.Count)
+//				return false;
+//
+//			if (candidate.GenericParameters.Count != method.GenericParameters.Count)
+//				return false;
+//
+//			for (int i = 0; i < cp.Count; i++) {
+//				if (!TypeMatch (candidate.GetParameterType (i), method.GetParameterType (i)))
+//					return false;
+//			}
+//
+//			return true;
+//		}
 
-		static bool MethodMatch (MethodReference candidate, MethodDefinition method)
+		static bool MethodMatch (MethodReference candidate, MethodReference method)
 		{
 			var candidateDef = candidate.Resolve ();
 
