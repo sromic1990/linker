@@ -116,7 +116,7 @@ namespace Mono.Linker.Steps {
 						var baseInflated = GetBaseInflatedInterfaceMethodInTypeHierarchy(genericContext, type, interfaceMethod);
 						if (baseInflated != null)
 						{
-							Annotations.AddOverride(interfaceMethod, baseInflated);
+							Annotations.AddOverride(interfaceMethod, baseInflated, @interface);
 //							Annotations.AddBaseMethod (baseInflated, interfaceMethod);
 //							AnnotateMethods (interfaceMethod, baseInflated);
 						}

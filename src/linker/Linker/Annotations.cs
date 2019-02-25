@@ -45,7 +45,7 @@ namespace Mono.Linker {
 		protected readonly Dictionary<TypeDefinition, TypePreserve> preserved_types = new Dictionary<TypeDefinition, TypePreserve> ();
 		protected readonly Dictionary<IMemberDefinition, List<MethodDefinition>> preserved_methods = new Dictionary<IMemberDefinition, List<MethodDefinition>> ();
 		protected readonly HashSet<IMetadataTokenProvider> public_api = new HashSet<IMetadataTokenProvider> ();
-		protected readonly Dictionary<MethodDefinition, List<MethodDefinition>> override_methods = new Dictionary<MethodDefinition, List<MethodDefinition>> ();
+		protected readonly Dictionary<MethodDefinition, List<OverrideInformation>> override_methods = new Dictionary<MethodDefinition, List<OverrideInformation>> ();
 		protected readonly Dictionary<MethodDefinition, List<MethodDefinition>> base_methods = new Dictionary<MethodDefinition, List<MethodDefinition>> ();
 		protected readonly Dictionary<AssemblyDefinition, ISymbolReader> symbol_readers = new Dictionary<AssemblyDefinition, ISymbolReader> ();
 		protected readonly Dictionary<TypeDefinition, List<TypeDefinition>> class_type_base_hierarchy = new Dictionary<TypeDefinition, List<TypeDefinition>> ();
@@ -56,6 +56,12 @@ namespace Mono.Linker {
 		protected readonly HashSet<CustomAttribute> marked_attributes = new HashSet<CustomAttribute> ();
 		readonly HashSet<TypeDefinition> marked_types_with_cctor = new HashSet<TypeDefinition> ();
 		protected readonly HashSet<TypeDefinition> marked_instantiated = new HashSet<TypeDefinition> ();
+
+		public class OverrideInformation
+		{
+			public MethodDefinition Method;
+			public InterfaceImplementation MatchingInterfaceImplementation;
+		}
 
 		public AnnotationStore (LinkContext context) => this.context = context;
 
@@ -241,20 +247,28 @@ namespace Mono.Linker {
 			return public_api.Contains (provider);
 		}
 
-		public void AddOverride (MethodDefinition @base, MethodDefinition @override)
+		public void AddOverride (MethodDefinition @base, MethodDefinition @override, InterfaceImplementation matchingInterfaceImplementation = null)
 		{
+			if(@base.FullName.Contains("Mono.Linker") && @base.Name.Contains("Method"))
+				Console.WriteLine();
+			
 			var methods = GetOverrides (@base);
 			if (methods == null) {
-				methods = new List<MethodDefinition> ();
+				methods = new List<OverrideInformation> ();
 				override_methods [@base] = methods;
 			}
 
-			methods.Add (@override);
+			methods.Add(new OverrideInformation
+			{
+				Method = @override,
+				MatchingInterfaceImplementation = matchingInterfaceImplementation
+			});
+			
 		}
 
-		public List<MethodDefinition> GetOverrides (MethodDefinition method)
+		public List<OverrideInformation> GetOverrides (MethodDefinition method)
 		{
-			List<MethodDefinition> overrides;
+			List<OverrideInformation> overrides;
 			if (override_methods.TryGetValue (method, out overrides))
 				return overrides;
 
@@ -263,6 +277,9 @@ namespace Mono.Linker {
 
 		public void AddBaseMethod (MethodDefinition method, MethodDefinition @base)
 		{
+			if(method.FullName.Contains("Mono.Linker") && method.Name.Contains("Method"))
+				Console.WriteLine();
+			
 			var methods = GetBaseMethods (method);
 			if (methods == null) {
 				methods = new List<MethodDefinition> ();
